@@ -1,15 +1,23 @@
-import { COLORS } from '@/src/constants/theme';
-import { Stack } from "expo-router";
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS } from "@/src/constants/theme";
+import InitialLayout from "@/src/navigation/InitialLayout";
+import {
+  MD3LightTheme as DefaultTheme,
+  PaperProvider,
+} from "react-native-paper";
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.primary,
+    secondary: COLORS.secondary,
+  },
+};
 
 export default function RootLayout() {
-  const insets = useSafeAreaInsets();
-  
   return (
-    <SafeAreaView style={{ flex: 1, paddingBottom: -insets.bottom, backgroundColor: COLORS.primary }}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </SafeAreaView>
+    <PaperProvider theme={theme}>
+      <InitialLayout />
+    </PaperProvider>
   );
 }

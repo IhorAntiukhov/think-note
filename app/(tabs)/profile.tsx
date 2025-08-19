@@ -1,10 +1,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-export default function NotesPage() {
+export default function AccountPage() {
   return (
     <View>
-      <Text>NotesPage</Text>
+      <Text>profile</Text>
     </View>
   );
 }
