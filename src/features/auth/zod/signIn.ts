@@ -1,16 +1,14 @@
+import { FORM_ERROR_MESSAGES } from "@/src/constants/formErrorMessages";
 import * as zod from "zod";
-
-export interface SignInFormData {
-  email: string;
-  password: string;
-}
 
 export default zod.object({
   email: zod.email({
     error: (issue) =>
-      !issue.input ? "Field is required" : "Enter a valid email",
+      !issue.input
+        ? FORM_ERROR_MESSAGES.fieldRequired
+        : FORM_ERROR_MESSAGES.invalidEmail,
   }),
   password: zod
-    .string("Field is required")
-    .min(6, "Password must be at least 6 characters long"),
+    .string(FORM_ERROR_MESSAGES.fieldRequired)
+    .min(6, FORM_ERROR_MESSAGES.passwordTooShort),
 });

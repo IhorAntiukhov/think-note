@@ -1,14 +1,17 @@
-import { Session } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { create } from "zustand";
 
 interface AuthStore {
   session: Session | null | undefined;
-  setSession: (session: Session | null) => void;
+  event: AuthChangeEvent | undefined;
+  setSession: (session: Session | null, event: AuthChangeEvent) => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
-  session: null,
-  setSession: (session: Session | null) => set(() => ({ session })),
+  session: undefined,
+  event: undefined,
+  setSession: (session: Session | null, event: AuthChangeEvent) =>
+    set(() => ({ session, event })),
 }));
 
 export default useAuthStore;

@@ -1,25 +1,21 @@
+import { FORM_ERROR_MESSAGES } from "@/src/constants/formErrorMessages";
 import * as zod from "zod";
-
-export interface SignUpFormData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 export default zod
   .object({
-    username: zod.string("Field is required"),
+    username: zod.string(FORM_ERROR_MESSAGES.fieldRequired),
     email: zod.email({
       error: (issue) =>
-        !issue.input ? "Field is required" : "Enter a valid email",
+        !issue.input
+          ? FORM_ERROR_MESSAGES.fieldRequired
+          : FORM_ERROR_MESSAGES.invalidEmail,
     }),
     password: zod
-      .string("Field is required")
-      .min(6, "Password must be at least 6 characters long"),
-    confirmPassword: zod.string("Field is required"),
+      .string(FORM_ERROR_MESSAGES.fieldRequired)
+      .min(6, FORM_ERROR_MESSAGES.passwordTooShort),
+    confirmPassword: zod.string(FORM_ERROR_MESSAGES.fieldRequired),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: "Passwords do not match",
+    error: FORM_ERROR_MESSAGES.passwordsUnmatch,
     path: ["confirmPassword"],
   });

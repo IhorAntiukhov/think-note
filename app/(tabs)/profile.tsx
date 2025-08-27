@@ -1,10 +1,11 @@
+import UserProfile from "@/src/features/auth/screens/UserProfile";
+import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
 import React from "react";
-import { Text, View } from "react-native";
 
 export default function AccountPage() {
   return (
-    <View>
-      <Text>profile</Text>
-    </View>
+    <ScreenScrollWrapper>
+      <UserProfile />
+    </ScreenScrollWrapper>
   );
 }

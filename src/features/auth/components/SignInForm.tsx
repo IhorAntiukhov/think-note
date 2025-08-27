@@ -11,7 +11,8 @@ import { useForm } from "react-hook-form";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import authStyles from "../styles/auth.styles";
 import SelectedForm from "../types/selectedForm";
-import schema, { SignInFormData } from "../zod/signIn";
+import schema from "../zod/signIn";
+import { SignInFormData } from "../types/forms";
 
 interface SignInFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -71,7 +72,11 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
         label="Password"
         type="password"
       />
-      <TextButton textColor={COLORS.secondary} style={authStyles.resetPassword}>
+      <TextButton
+        textColor={COLORS.secondary}
+        style={authStyles.resetPassword}
+        onPress={() => switchForm(SelectedForm.ResetPassword)}
+      >
         Reset password
       </TextButton>
 

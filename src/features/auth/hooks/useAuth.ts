@@ -1,19 +1,19 @@
+import useAuthStore from "@/src/store/authStore";
 import { useEffect } from "react";
 import supabase from "../../../api/supabase";
-import useAuthStore from "@/src/store/authStore";
 
 export default function useAuth() {
-  const { session, setSession } = useAuthStore();
+  const { session, event, setSession } = useAuthStore();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session, event);
     });
 
-    supabase.auth.onAuthStateChange((_, session) => {
-      setSession(session);
-    });
+    return () => {
+      data.subscription.unsubscribe();
+    };
   }, [setSession]);
 
-  return session;
+  return { session, event };
 }
