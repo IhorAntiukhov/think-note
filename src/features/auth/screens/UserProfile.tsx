@@ -1,4 +1,4 @@
-import { signOut } from "@/src/api/auth";
+import { signOut } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { useState } from "react";
@@ -12,7 +12,7 @@ import authStyles from "../styles/auth.styles";
 import profileStyles from "../styles/profile.styles";
 
 export default function UserProfile() {
-  const session = useAuthStore().session;
+  const { session } = useAuthStore();
   const user = session?.user;
 
   const [coverHeight, setCoverHeight] = useState(0);
@@ -48,6 +48,7 @@ export default function UserProfile() {
             <OutlineButton
               icon="logout"
               style={{ flexGrow: 1 }}
+              themeColor="secondary"
               onPress={signOut}
             >
               Sign out

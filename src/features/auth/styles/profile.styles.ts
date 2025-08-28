@@ -8,7 +8,6 @@ export default StyleSheet.create({
     justifyContent: "center",
     flexDirection: "column",
     padding: 20,
-    backgroundColor: COLORS.background,
   },
   cover: {
     position: "absolute",
@@ -33,7 +32,13 @@ export default StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    boxShadow: `0 2px 7px 2px ${COLORS.primary}`,
+    boxShadow: `0 2px 7px 2px ${COLORS.accentGradient}`,
+    objectFit: "cover",
+  },
+  avatarImageMinimized: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     objectFit: "cover",
   },
   title: {

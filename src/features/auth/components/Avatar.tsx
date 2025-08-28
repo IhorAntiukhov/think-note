@@ -1,6 +1,7 @@
-import { updateUser } from "@/src/api/auth";
 import supabase from "@/src/api/supabase";
+import { updateUser } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { AuthError } from "@supabase/supabase-js";
 import * as Font from "expo-font";
 import { Image } from "expo-image";
@@ -9,28 +10,35 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import profileStyles from "../styles/profile.styles";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-export default function Avatar() {
-  const session = useAuthStore().session;
+interface AvatarProps {
+  minimized?: boolean;
+}
+
+export default function Avatar({ minimized = false }: AvatarProps) {
+  const { session, avatarUrl, setAvatarUrl } = useAuthStore();
   const user = session?.user;
 
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
-  const [avatarUrl, setAvatarUrl] = useState("");
 
-  const downloadFromStorage = useCallback(async (avatarPath: string) => {
-    const { data, error } = await supabase.storage
-      .from("Avatars")
-      .download(avatarPath);
+  const size = minimized ? 48 : 96;
 
-    if (!data || error) throw error;
+  const downloadFromStorage = useCallback(
+    async (avatarPath: string) => {
+      const { data, error } = await supabase.storage
+        .from("Avatars")
+        .download(avatarPath);
 
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(data);
-    fileReader.onload = () => {
-      setAvatarUrl(fileReader.result as string);
-    };
-  }, []);
+      if (!data || error) throw error;
+
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(data);
+      fileReader.onload = () => {
+        setAvatarUrl(fileReader.result as string);
+      };
+    },
+    [setAvatarUrl],
+  );
 
   useEffect(() => {
     async function loadAvatar() {
@@ -104,32 +112,44 @@ export default function Avatar() {
     }
   };
 
+  const avatarImage = (
+    <Image
+      source={{ uri: avatarUrl }}
+      style={
+        minimized
+          ? profileStyles.avatarImageMinimized
+          : profileStyles.avatarImage
+      }
+      alt="User avatar image"
+      onLoad={() => setIsAvatarLoading(false)}
+    />
+  );
+
   return (
     <>
       {isAvatarLoading && (
         <ActivityIndicator
           animating
           color="white"
-          size={96}
+          size={size}
           style={{ marginBottom: 10 }}
         />
       )}
       {avatarUrl && !(isAvatarLoading && avatarUrl) ? (
-        <TouchableOpacity onPress={uploadAvatar} style={{ marginBottom: 10 }}>
-          <Image
-            source={{ uri: avatarUrl }}
-            style={profileStyles.avatarImage}
-            alt="User avatar image"
-            onLoad={() => setIsAvatarLoading(false)}
-          />
-        </TouchableOpacity>
+        minimized ? (
+          avatarImage
+        ) : (
+          <TouchableOpacity onPress={uploadAvatar} style={{ marginBottom: 10 }}>
+            {avatarImage}
+          </TouchableOpacity>
+        )
       ) : (
         !isAvatarLoading && (
           <MaterialCommunityIcons
             name="account-edit"
-            size={96}
+            size={size}
             color={"white"}
-            onPress={uploadAvatar}
+            onPress={minimized ? undefined : uploadAvatar}
             style={{ marginBottom: 10 }}
           />
         )

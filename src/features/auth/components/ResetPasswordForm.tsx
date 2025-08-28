@@ -1,5 +1,5 @@
-import { resetPassword } from "@/src/api/auth";
 import { COLORS } from "@/src/constants/theme";
+import { resetPassword } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
@@ -20,6 +20,8 @@ interface ResetPasswordFormProps {
 export default function ResetPasswordForm({
   switchForm,
 }: ResetPasswordFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     control,
     formState: { errors },
@@ -27,8 +29,6 @@ export default function ResetPasswordForm({
   } = useForm<EmailFormData>({
     resolver: zodResolver(emailFormSchema),
   });
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = handleSubmit(async (formData) => {
     try {

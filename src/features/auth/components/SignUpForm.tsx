@@ -1,5 +1,5 @@
-import { signUp } from "@/src/api/auth";
 import { COLORS } from "@/src/constants/theme";
+import { signUp } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
@@ -9,9 +9,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, Text, View } from "react-native";
 import authStyles from "../styles/auth.styles";
+import { SignUpFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import schema from "../zod/signUp";
-import { SignUpFormData } from "../types/forms";
 
 interface SignUpFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;

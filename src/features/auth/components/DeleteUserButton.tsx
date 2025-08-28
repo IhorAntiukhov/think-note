@@ -1,5 +1,5 @@
-import { deleteUser, signOut } from "@/src/api/auth";
 import supabase from "@/src/api/supabase";
+import { deleteUser, signOut } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { AuthError } from "@supabase/supabase-js";
@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 
 export default function DeleteUserButton() {
-  const session = useAuthStore().session;
+  const { session } = useAuthStore();
   const user = session?.user;
 
   const showUserDeletionDialog = useCallback(() => {
@@ -49,6 +49,7 @@ export default function DeleteUserButton() {
   return (
     <OutlineButton
       icon="delete"
+      themeColor="error"
       style={{ flexGrow: 1 }}
       onPress={showUserDeletionDialog}
     >

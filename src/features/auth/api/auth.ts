@@ -1,7 +1,8 @@
-import { AuthError, Provider, User } from "@supabase/supabase-js";
+import { AuthError, User } from "@supabase/supabase-js";
+import * as Linking from "expo-linking";
 import { Alert } from "react-native";
-import { FormDataKey } from "../features/auth/types/forms";
-import supabase from "./supabase";
+import supabase from "../../../api/supabase";
+import { FormDataKey } from "../types/forms";
 
 export async function signInWithEmailAndPassword(
   email: string,
@@ -10,14 +11,6 @@ export async function signInWithEmailAndPassword(
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
-  });
-
-  return { data, error };
-}
-
-export async function signInWithProvider(provider: Provider) {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
   });
 
   return { data, error };
@@ -35,6 +28,7 @@ export async function signUp(
       data: {
         username,
       },
+      emailRedirectTo: Linking.createURL("/(auth)/login"),
     },
   });
 
@@ -49,7 +43,7 @@ export async function signOut() {
 
 export async function resetPassword(email: string) {
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "exp://xznabgw-anonymous-8081.exp.direct/--/(auth)/login",
+    redirectTo: Linking.createURL("/(auth)/login"),
   });
 
   return { data, error };

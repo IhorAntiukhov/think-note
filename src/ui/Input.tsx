@@ -1,8 +1,12 @@
-import { COLORS } from "@/src/constants/theme";
 import React, { useState } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { KeyboardTypeOptions, StyleProp, View, ViewStyle } from "react-native";
-import { HelperText, TextInput, TextInputProps } from "react-native-paper";
+import {
+  HelperText,
+  TextInput,
+  TextInputProps,
+  useTheme,
+} from "react-native-paper";
 import type { IconSource } from "react-native-paper/lib/typescript/components/Icon";
 
 interface InputProps<T extends FieldValues> extends TextInputProps {
@@ -26,6 +30,7 @@ export default function Input<T extends FieldValues>({
   outerStyle,
   ...rest
 }: InputProps<T>) {
+  const theme = useTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   return (
@@ -36,7 +41,7 @@ export default function Input<T extends FieldValues>({
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             mode="outlined"
-            left={<TextInput.Icon icon={icon} color={COLORS.primary} />}
+            left={<TextInput.Icon icon={icon} color={theme.colors.secondary} />}
             right={
               type === "password" ? (
                 <TextInput.Icon
@@ -53,6 +58,7 @@ export default function Input<T extends FieldValues>({
               borderWidth: 2,
               borderRadius: 10,
             }}
+            theme={{ colors: { primary: theme.colors.secondary } }}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}

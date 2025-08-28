@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import InitialLayout from "@/src/navigation/InitialLayout";
+import AuthLayout from "@/src/navigation/AuthLayout";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -17,7 +17,7 @@ const theme = {
 export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
-      <InitialLayout />
+      <AuthLayout />
     </PaperProvider>
   );
 }

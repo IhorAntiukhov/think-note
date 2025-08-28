@@ -1,18 +1,19 @@
-import { signInWithEmailAndPassword, signInWithProvider } from "@/src/api/auth";
 import { COLORS } from "@/src/constants/theme";
+import { signInWithEmailAndPassword } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
 import { zodResolver } from "@hookform/resolvers/zod";
+import MaskedView from "@react-native-masked-view/masked-view";
 import { AuthError } from "@supabase/supabase-js";
-import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import authStyles from "../styles/auth.styles";
+import { SignInFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import schema from "../zod/signIn";
-import { SignInFormData } from "../types/forms";
 
 interface SignInFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -49,9 +50,23 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
 
   return (
     <>
-      <Text style={authStyles.title}>
-        Welcome to <Text style={authStyles.thinkNoteTitle}>Think Note</Text>!
-      </Text>
+      <View style={authStyles.titleWrapper}>
+        <Text style={authStyles.titleParts}>Welcome to </Text>
+        <MaskedView
+          maskElement={
+            <Text style={authStyles.thinkNoteTitle}>Think Note</Text>
+          }
+        >
+          <LinearGradient
+            colors={[COLORS.accent, COLORS.accentGradient]}
+            start={[0, 0]}
+            end={[1, 1]}
+          >
+            <Text style={authStyles.thinkNoteTitleTransparent}>Think Note</Text>
+          </LinearGradient>
+        </MaskedView>
+        <Text style={authStyles.titleParts}>!</Text>
+      </View>
 
       <Input
         name="email"
@@ -97,39 +112,6 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
         >
           Sign up
         </TextButton>
-      </View>
-
-      <Text style={{ textAlign: "center", marginBottom: 10 }}>
-        Or, use auth providers:
-      </Text>
-
-      <View style={authStyles.providers}>
-        <TouchableOpacity
-          onPress={async () => await signInWithProvider("google")}
-        >
-          <Image
-            style={{ width: 42, height: 42 }}
-            source={require("@/src/assets/images/google.svg")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={async () => await signInWithProvider("github")}
-        >
-          <Image
-            style={{ width: 42, height: 42 }}
-            source={require("@/src/assets/images/github.svg")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={async () => await signInWithProvider("linkedin")}
-        >
-          <Image
-            style={{ width: 42, height: 42 }}
-            source={require("@/src/assets/images/linkedin.svg")}
-          />
-        </TouchableOpacity>
       </View>
     </>
   );

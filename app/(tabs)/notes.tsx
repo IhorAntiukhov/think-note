@@ -1,10 +1,11 @@
+import AllNotes from "@/src/features/notes/screens/AllNotes";
+import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
 import React from "react";
-import { Text, View } from "react-native";
 
 export default function NotesPage() {
   return (
-    <View>
-      <Text>NotesPage</Text>
-    </View>
+    <ScreenScrollWrapper>
+      <AllNotes />
+    </ScreenScrollWrapper>
   );
 }

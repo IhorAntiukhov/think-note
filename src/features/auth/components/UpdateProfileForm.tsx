@@ -1,4 +1,5 @@
-import { updateUserWithMessage } from "@/src/api/auth";
+import { COLORS } from "@/src/constants/theme";
+import { updateUserWithMessage } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -82,7 +83,13 @@ export default function UpdateProfileForm() {
         errorText={usernameErrors.username?.message}
         type="ascii-capable"
         outerStyle={{ marginBottom: 5 }}
-        right={<TextInput.Icon icon="sync" onPress={updateUsername} />}
+        right={
+          <TextInput.Icon
+            icon="sync"
+            color={COLORS.primary}
+            onPress={updateUsername}
+          />
+        }
       />
 
       <Input
@@ -94,7 +101,13 @@ export default function UpdateProfileForm() {
         label="Email"
         type="email-address"
         outerStyle={{ marginBottom: 5 }}
-        right={<TextInput.Icon icon="sync" onPress={updateEmail} />}
+        right={
+          <TextInput.Icon
+            icon="sync"
+            color={COLORS.primary}
+            onPress={updateEmail}
+          />
+        }
       />
 
       <Input
@@ -118,7 +131,11 @@ export default function UpdateProfileForm() {
           type="password"
           outerStyle={{ flexGrow: 1 }}
         />
-        <IconButton icon="sync" onPress={updatePassword} />
+        <IconButton
+          icon="sync"
+          iconColor={COLORS.primary}
+          onPress={updatePassword}
+        />
       </View>
 
       <Input
