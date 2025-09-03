@@ -5,12 +5,15 @@ export default StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   mainDirectory: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+    marginBottom: 10,
   },
 });
