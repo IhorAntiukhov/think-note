@@ -1,3 +1,4 @@
+import { COLORS } from "@/src/constants/theme";
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -15,5 +16,16 @@ export default StyleSheet.create({
     alignItems: "center",
     gap: 10,
     marginBottom: 10,
+  },
+  treeListControlButtons: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+  },
+  treeListControlButton: {
+    borderRadius: "50%",
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    margin: 0,
   },
 });

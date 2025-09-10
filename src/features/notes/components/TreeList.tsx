@@ -1,64 +1,130 @@
+import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
 import { Tables } from "@/src/types/supabase";
 import OutlineButton from "@/src/ui/OutlineButton";
+import { errorAlert } from "@/src/utils/alerts";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, View } from "react-native";
-import { Divider } from "react-native-paper";
-import { getAllItems, insertFolder } from "../api/notesRepo";
+import { Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Divider,
+  IconButton,
+  Searchbar,
+} from "react-native-paper";
+import Avatar from "../../auth/components/Avatar";
+import {
+  getAllItems,
+  getItemsInFolders,
+  getTopFolders,
+  insertFolder,
+} from "../api/notesRepo";
 import SORTING_OPTIONS from "../constants/sortingOptions";
+import allNotesStyles from "../styles/allNotes.styles";
 import treeListStyles from "../styles/treeList.styles";
 import sortItems from "../utils/sortItems";
+import FolderNameInput from "./FolderNameInput";
 import Sorting from "./Sorting";
 import TreeItem from "./TreeItem";
 
 type TreeItemType = Tables<"notes">;
+
 interface OpenedFolderType {
   currentFolderId: number;
   parentFolderId: number | null;
+}
+
+enum LoadingAllState {
+  notLoading,
+  loadingExpand,
+  loadingCollapse,
+  loadingAll,
 }
 
 export default function TreeList() {
   const [data, setData] = useState<TreeItemType[]>([]);
   const [openedFolders, setOpenedFolders] = useState<OpenedFolderType[]>([]);
   const [newFolderDepth, setNewFolderDepth] = useState<number | null>(null);
-  const [loadingFolderId, setLoadingFolderId] = useState<number | null>(null);
 
-  const [sortBy, setSortBy] = useState<string | undefined>(
-    SORTING_OPTIONS[0].value,
+  const [loadingFolderId, setLoadingFolderId] = useState<number | null>(null);
+  const [loadingAllState, setLoadingAllState] = useState(
+    LoadingAllState.loadingAll,
   );
 
-  const { session } = useAuthStore();
-  const user = session!.user;
+  const [sortBy, setSortBy] = useState<string>(SORTING_OPTIONS[0].value);
+  const [isAscending, setIsAscending] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { user } = useAuthStore().session!;
+
+  const fetchData = useCallback(async () => {
+    try {
+      const { data, error } = await getItemsInFolders(
+        user.id,
+        openedFolders.map((openedFolder) => openedFolder.currentFolderId),
+        sortBy,
+        isAscending,
+      );
+
+      if (error) throw error;
+
+      if (data) setData(sortItems(data));
+    } catch (error) {
+      errorAlert("Fetch failed", error as PostgrestError);
+    } finally {
+      setLoadingFolderId(null);
+      setLoadingAllState(LoadingAllState.notLoading);
+    }
+  }, [isAscending, sortBy, user.id, openedFolders]);
+
+  const expandOrCollapseFolders = useCallback(
+    async (expand: boolean) => {
       try {
-        const { data, error } = await getAllItems(
-          user.id,
-          openedFolders.map((openedFolder) => openedFolder.currentFolderId),
-          sortBy,
-          false,
+        setLoadingAllState(
+          expand
+            ? LoadingAllState.loadingExpand
+            : LoadingAllState.loadingCollapse,
         );
+        const { data, error } = expand
+          ? await getAllItems(user.id, sortBy, isAscending)
+          : await getTopFolders(user.id, sortBy, isAscending);
 
         if (error) throw error;
 
-        if (data) setData(sortItems(data));
+        if (data) {
+          const sortedData = sortItems(data);
+
+          setData(sortedData);
+
+          if (expand) {
+            setOpenedFolders(
+              sortedData.reduce<OpenedFolderType[]>((folders, item) => {
+                if (item.type === "folder") {
+                  folders.push({
+                    currentFolderId: item.id,
+                    parentFolderId: item.folder_id,
+                  });
+                }
+                return folders;
+              }, []),
+            );
+          } else {
+            setOpenedFolders([]);
+          }
+        }
       } catch (error) {
-        Alert.alert(
-          "Fetch failed",
-          (error as PostgrestError).message,
-          undefined,
-          {
-            cancelable: true,
-          },
-        );
+        errorAlert("Fetch failed", error as PostgrestError);
       } finally {
-        setLoadingFolderId(null);
+        setLoadingAllState(LoadingAllState.notLoading);
       }
-    }
+    },
+    [isAscending, sortBy, user.id],
+  );
+
+  useEffect(() => {
     fetchData();
-  }, [user.id, sortBy, openedFolders]);
+  }, [fetchData]);
 
   const createFolder = useCallback(
     async (
@@ -85,18 +151,15 @@ export default function TreeList() {
         const newData = data ? [...data] : [];
         newData.splice(parentFolderId ? parentIndex + 1 : 0, 0, newFolder!);
         setData(newData);
+
+        await fetchData();
       } catch (error) {
-        Alert.alert(
-          "Folder creation failed",
-          (error as PostgrestError).message,
-          undefined,
-          { cancelable: true },
-        );
+        errorAlert("Folder creation failder", error as PostgrestError);
       } finally {
         setNewFolderDepth(null);
       }
     },
-    [user.id, data],
+    [user.id, data, fetchData],
   );
 
   const toggleFolder = useCallback(
@@ -154,17 +217,86 @@ export default function TreeList() {
 
   return (
     <>
-      <Sorting value={sortBy} onSelect={setSortBy} />
+      <Searchbar
+        placeholder="Search"
+        onChangeText={setSearchQuery}
+        value={searchQuery}
+        style={{ marginBottom: 20 }}
+      />
 
-      {newFolderDepth && <TreeItem index={0} onCreateFolder={createFolder} />}
+      <View style={allNotesStyles.mainDirectory}>
+        <Avatar minimized />
+        <Text style={{ fontSize: 18, flexGrow: 1 }}>
+          {user.user_metadata.username}
+        </Text>
+
+        <View style={allNotesStyles.treeListControlButtons}>
+          {loadingAllState === LoadingAllState.loadingExpand ? (
+            <ActivityIndicator size={32} />
+          ) : (
+            <IconButton
+              icon="arrow-expand-all"
+              size={20}
+              iconColor={COLORS.primary}
+              style={allNotesStyles.treeListControlButton}
+              onPress={() => expandOrCollapseFolders(true)}
+            />
+          )}
+          {loadingAllState === LoadingAllState.loadingCollapse ? (
+            <ActivityIndicator size={32} />
+          ) : (
+            <IconButton
+              icon="arrow-collapse-all"
+              size={20}
+              iconColor={COLORS.primary}
+              style={allNotesStyles.treeListControlButton}
+              onPress={() => expandOrCollapseFolders(false)}
+            />
+          )}
+        </View>
+      </View>
+
+      <Divider style={{ marginHorizontal: -20, marginBottom: 10 }} />
+
+      <Sorting
+        sortBy={sortBy}
+        onChangeSortBy={setSortBy}
+        isAscending={isAscending}
+        onChangeIsAscending={setIsAscending}
+      />
+
+      {newFolderDepth && (
+        <FolderNameInput
+          nested={false}
+          index={0}
+          onCreateFolder={createFolder}
+        />
+      )}
+      {!data.length && !newFolderDepth && (
+        <View style={treeListStyles.noDataWrapper}>
+          {loadingAllState === LoadingAllState.loadingAll ? (
+            <ActivityIndicator size={32} />
+          ) : (
+            <Text style={treeListStyles.noDataText}>
+              You do not have any folders or notes
+            </Text>
+          )}
+        </View>
+      )}
       <View style={treeListStyles.listContainer}>
         {data?.map((item, index) => (
           <TreeItem
             key={item.id}
             item={item}
             index={index}
+            isFolderOpened={
+              !!openedFolders.find(
+                (folder) => folder.currentFolderId === item.id,
+              )
+            }
             onCreateFolder={createFolder}
             onFolderToggle={toggleFolder}
+            onUpdateFolders={fetchData}
             isLoading={item.id === loadingFolderId}
           />
         ))}

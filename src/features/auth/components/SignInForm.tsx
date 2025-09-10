@@ -3,13 +3,14 @@ import { signInWithEmailAndPassword } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
+import { errorAlert } from "@/src/utils/alerts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { AuthError } from "@supabase/supabase-js";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import authStyles from "../styles/auth.styles";
 import { SignInFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
@@ -40,9 +41,7 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
 
       if (error) throw error;
     } catch (error) {
-      Alert.alert("Sign in failed", (error as AuthError).message, undefined, {
-        cancelable: true,
-      });
+      errorAlert("Sign in failed", error as AuthError);
     } finally {
       setIsLoading(false);
     }

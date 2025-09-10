@@ -1,15 +1,16 @@
 import supabase from "@/src/api/supabase";
 import { updateUser } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
+import { errorAlert } from "@/src/utils/alerts";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { AuthError } from "@supabase/supabase-js";
 import * as Font from "expo-font";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import profileStyles from "../styles/profile.styles";
+import { PostgrestError } from "@supabase/supabase-js";
 
 interface AvatarProps {
   minimized?: boolean;
@@ -101,12 +102,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
 
       downloadFromStorage(data.path);
     } catch (error) {
-      Alert.alert(
-        "Avatar upload failed",
-        (error as AuthError)?.message,
-        undefined,
-        { cancelable: true },
-      );
+      errorAlert("Avatar upload failed", error as PostgrestError);
     } finally {
       setIsAvatarLoading(false);
     }

@@ -22,6 +22,14 @@ export default StyleSheet.create({
   text: {
     fontSize: 18,
   },
+  noDataWrapper: {
+    marginVertical: 10,
+  },
+  noDataText: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "gray",
+  },
   input: {
     fontSize: 18,
     width: "100%",

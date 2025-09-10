@@ -3,11 +3,12 @@ import { signUp } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
+import { errorAlert, infoAlert } from "@/src/utils/alerts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import authStyles from "../styles/auth.styles";
 import { SignUpFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
@@ -39,18 +40,9 @@ export default function SignUpForm({ switchForm }: SignUpFormProps) {
 
       if (error) throw error;
 
-      Alert.alert(
-        "Sign up succeded",
-        "Check your email to confirm sign up",
-        undefined,
-        {
-          cancelable: true,
-        },
-      );
+      infoAlert("Sign up succeded", "Check your email to confirm sign up");
     } catch (error) {
-      Alert.alert("Sign up failed", (error as AuthError).message, undefined, {
-        cancelable: true,
-      });
+      errorAlert("Sign up failed", error as AuthError);
     } finally {
       setIsLoading(false);
     }

@@ -1,104 +1,84 @@
 import { COLORS } from "@/src/constants/theme";
 import { Tables } from "@/src/types/supabase";
+import { confirmationAlert, errorAlert } from "@/src/utils/alerts";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { PostgrestError } from "@supabase/supabase-js";
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import {
-  NativeSyntheticEvent,
-  Pressable,
-  Text,
-  TextInput,
-  TextInputEndEditingEventData,
-  View,
-} from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { ActivityIndicator, Menu } from "react-native-paper";
+import { deleteFolder } from "../api/notesRepo";
 import treeListStyles from "../styles/treeList.styles";
+import OnCreateFolder from "../types/onCreateFolder";
+import FolderNameInput from "./FolderNameInput";
 
 interface TreeItemProps {
-  item?: Tables<"notes">;
+  item: Tables<"notes">;
   index: number;
-  onCreateFolder?: (
-    folderName: string,
-    parentIndex: number,
-    parentFolderId: number | null,
-    depth: number,
-  ) => void;
-  onFolderToggle?: (
+  isFolderOpened: boolean;
+  onCreateFolder: OnCreateFolder;
+  onFolderToggle: (
     isOpened: boolean,
     currentFolderId: number,
     parentFolderId: number | null,
   ) => void;
-  isLoading?: boolean;
+  onUpdateFolders: () => void;
+  isLoading: boolean;
 }
 
 export default function TreeItem({
   item,
   index,
+  isFolderOpened,
   onCreateFolder,
   onFolderToggle,
+  onUpdateFolders,
   isLoading,
 }: TreeItemProps) {
-  const [isFolderOpened, setIsFolderOpened] = useState(false);
   const [isFolderCreationStarted, setIsFolderCreationStarted] = useState(false);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
-  const onEndEditing = useCallback(
-    (event: NativeSyntheticEvent<TextInputEndEditingEventData>) => {
-      setIsFolderCreationStarted(false);
-      onCreateFolder!(
-        event.nativeEvent.text,
-        index,
-        item?.id || null,
-        (item?.depth || 0) + 1,
-      );
-    },
-    [item, index, onCreateFolder],
-  );
-
-  const leftOffset = ((item?.depth || 1) - 1) * 28;
+  const router = useRouter();
+  const leftOffset = (item.depth - 1) * 28;
 
   const toggleFolder = () => {
-    setIsFolderOpened((state) => {
-      onFolderToggle!(!state, item!.id, item!.folder_id);
-      return !state;
-    });
+    onFolderToggle!(!isFolderOpened, item.id, item.folder_id);
   };
-
-  const getFolder = useCallback(
-    (isInput: boolean) => {
-      const folder = (
-        <View style={treeListStyles.itemContainer}>
-          <MaterialIcons
-            name="folder"
-            size={28}
-            color={COLORS.secondary}
-            style={{
-              marginRight: 5,
-              marginLeft: isInput ? 28 : 0,
-            }}
-          />
-          {(isInput || !item) && (
-            <TextInput
-              style={treeListStyles.input}
-              placeholder="Enter folder name"
-              onEndEditing={onEndEditing}
-              maxLength={20}
-              autoFocus
-            />
-          )}
-          {item && <Text style={treeListStyles.text}>{item.name}</Text>}
-        </View>
-      );
-
-      return folder;
-    },
-    [item, onEndEditing],
-  );
 
   const startFolderCreation = useCallback(() => {
     setIsFolderCreationStarted(true);
     setIsMenuOpened(false);
   }, []);
+
+  const openNoteCreationPage = useCallback(() => {
+    router.replace({
+      pathname: "/(notes)/new-note",
+      params: {
+        folderId: item.id,
+        depth: item.depth,
+      },
+    });
+  }, [router, item.id, item.depth]);
+
+  const onDeleteFolder = useCallback(async () => {
+    confirmationAlert(
+      "Folder deletion",
+      `Are you sure you want to delete folder "${item?.name}"? This operation is irreversible and will remove all the nested notes and folders.`,
+      async () => {
+        try {
+          const { error } = await deleteFolder(item!.id);
+
+          if (error) throw error;
+
+          onUpdateFolders!();
+        } catch (error) {
+          errorAlert("Folder deletion failed", error as PostgrestError);
+        }
+      },
+    );
+    setIsMenuOpened(false);
+  }, [item, onUpdateFolders]);
 
   return (
     <View style={{ marginLeft: leftOffset }}>
@@ -110,7 +90,15 @@ export default function TreeItem({
               size={28}
             />
           )}
-          {getFolder(false)}
+          <View style={treeListStyles.itemContainer}>
+            <MaterialIcons
+              name="folder"
+              size={28}
+              color={COLORS.secondary}
+              style={{ marginRight: 5 }}
+            />
+            {item && <Text style={treeListStyles.text}>{item.name}</Text>}
+          </View>
         </Pressable>
         {isFolderOpened && (
           <Menu
@@ -132,19 +120,28 @@ export default function TreeItem({
             />
             <Menu.Item
               leadingIcon="note-plus"
-              onPress={() => {}}
+              onPress={openNoteCreationPage}
               title="New note"
             />
             <Menu.Item
               leadingIcon="delete"
-              onPress={() => {}}
+              onPress={onDeleteFolder}
               title="Delete folder"
             />
           </Menu>
         )}
         {isLoading && <ActivityIndicator size={28} color={COLORS.secondary} />}
       </View>
-      {isFolderCreationStarted && getFolder(true)}
+      {isFolderCreationStarted && (
+        <FolderNameInput
+          nested
+          setIsFolderCreationStarted={setIsFolderCreationStarted}
+          onCreateFolder={onCreateFolder}
+          index={index}
+          itemId={item.id}
+          itemDepth={item.depth}
+        />
+      )}
     </View>
   );
 }

@@ -1,6 +1,6 @@
+import { errorAlert, infoAlert } from "@/src/utils/alerts";
 import { AuthError, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
-import { Alert } from "react-native";
 import supabase from "../../../api/supabase";
 import { FormDataKey } from "../types/forms";
 
@@ -82,13 +82,9 @@ export async function updateUserWithMessage(
       ? "Password updated successfully"
       : `${paramName.charAt(0).toUpperCase()}${paramName.substring(1)} updated to ${username || email || password}`;
 
-    Alert.alert("User update succeded", alertMessage, undefined, {
-      cancelable: true,
-    });
+    infoAlert("User update succeded", alertMessage);
   } catch (error) {
-    Alert.alert("User update failed", (error as AuthError).message, undefined, {
-      cancelable: true,
-    });
+    errorAlert("User update failed", error as AuthError);
   }
 }
 

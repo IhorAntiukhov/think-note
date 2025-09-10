@@ -3,11 +3,12 @@ import { resetPassword } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
+import { errorAlert, infoAlert } from "@/src/utils/alerts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import authStyles from "../styles/auth.styles";
 import { EmailFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
@@ -37,18 +38,9 @@ export default function ResetPasswordForm({
 
       if (error) throw error;
 
-      Alert.alert("Password reset", "Check your email", undefined, {
-        cancelable: true,
-      });
+      infoAlert("Password reset", "Check your email");
     } catch (error) {
-      Alert.alert(
-        "Password reset failed",
-        (error as AuthError).message,
-        undefined,
-        {
-          cancelable: true,
-        },
-      );
+      errorAlert("Password reset failed", error as AuthError);
     } finally {
       setIsLoading(false);
     }
