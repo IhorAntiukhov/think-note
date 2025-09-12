@@ -4,7 +4,7 @@ import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
 export default function NewNotePage() {
   return (
     <ScreenScrollWrapper>
-      <SingleNote />
+      <SingleNote type="newNote" />
     </ScreenScrollWrapper>
   );
 }

@@ -1,10 +1,10 @@
-import { Tables } from "@/src/types/supabase";
+import { TreeItemRow } from "../types/rowTypes";
 
 export default function sortItems(
-  items: Tables<"notes">[],
+  items: TreeItemRow[],
   parentFolderId: number | null = null,
 ) {
-  let result: Tables<"notes">[] = [];
+  let result: TreeItemRow[] = [];
   const children = items.filter((item) => item.folder_id === parentFolderId);
 
   children.forEach((item) => {

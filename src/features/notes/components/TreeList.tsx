@@ -1,10 +1,10 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
-import { Tables } from "@/src/types/supabase";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { errorAlert } from "@/src/utils/alerts";
 import { PostgrestError } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import {
   ActivityIndicator,
@@ -22,12 +22,12 @@ import {
 import SORTING_OPTIONS from "../constants/sortingOptions";
 import allNotesStyles from "../styles/allNotes.styles";
 import treeListStyles from "../styles/treeList.styles";
+import { TreeItemRow } from "../types/rowTypes";
 import sortItems from "../utils/sortItems";
+import FolderItem from "./FolderItem";
 import FolderNameInput from "./FolderNameInput";
-import Sorting from "./Sorting";
-import TreeItem from "./TreeItem";
-
-type TreeItemType = Tables<"notes">;
+import NoteItem from "./NoteItem";
+import SortingAndFiltering from "./SortingAndFiltering";
 
 interface OpenedFolderType {
   currentFolderId: number;
@@ -42,7 +42,7 @@ enum LoadingAllState {
 }
 
 export default function TreeList() {
-  const [data, setData] = useState<TreeItemType[]>([]);
+  const [data, setData] = useState<TreeItemRow[]>([]);
   const [openedFolders, setOpenedFolders] = useState<OpenedFolderType[]>([]);
   const [newFolderDepth, setNewFolderDepth] = useState<number | null>(null);
 
@@ -53,6 +53,8 @@ export default function TreeList() {
 
   const [sortBy, setSortBy] = useState<string>(SORTING_OPTIONS[0].value);
   const [isAscending, setIsAscending] = useState(false);
+
+  const [showOnlyMarked, setShowOnlyMarked] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -65,6 +67,7 @@ export default function TreeList() {
         openedFolders.map((openedFolder) => openedFolder.currentFolderId),
         sortBy,
         isAscending,
+        showOnlyMarked,
       );
 
       if (error) throw error;
@@ -76,7 +79,7 @@ export default function TreeList() {
       setLoadingFolderId(null);
       setLoadingAllState(LoadingAllState.notLoading);
     }
-  }, [isAscending, sortBy, user.id, openedFolders]);
+  }, [isAscending, sortBy, user.id, openedFolders, showOnlyMarked]);
 
   const expandOrCollapseFolders = useCallback(
     async (expand: boolean) => {
@@ -87,8 +90,8 @@ export default function TreeList() {
             : LoadingAllState.loadingCollapse,
         );
         const { data, error } = expand
-          ? await getAllItems(user.id, sortBy, isAscending)
-          : await getTopFolders(user.id, sortBy, isAscending);
+          ? await getAllItems(user.id, sortBy, isAscending, showOnlyMarked)
+          : await getTopFolders(user.id, sortBy, isAscending, showOnlyMarked);
 
         if (error) throw error;
 
@@ -119,12 +122,14 @@ export default function TreeList() {
         setLoadingAllState(LoadingAllState.notLoading);
       }
     },
-    [isAscending, sortBy, user.id],
+    [isAscending, sortBy, showOnlyMarked, user.id],
   );
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData]),
+  );
 
   const createFolder = useCallback(
     async (
@@ -258,11 +263,13 @@ export default function TreeList() {
 
       <Divider style={{ marginHorizontal: -20, marginBottom: 10 }} />
 
-      <Sorting
+      <SortingAndFiltering
         sortBy={sortBy}
         onChangeSortBy={setSortBy}
         isAscending={isAscending}
         onChangeIsAscending={setIsAscending}
+        isMarked={showOnlyMarked}
+        onChangeIsMarked={setShowOnlyMarked}
       />
 
       {newFolderDepth && (
@@ -284,22 +291,26 @@ export default function TreeList() {
         </View>
       )}
       <View style={treeListStyles.listContainer}>
-        {data?.map((item, index) => (
-          <TreeItem
-            key={item.id}
-            item={item}
-            index={index}
-            isFolderOpened={
-              !!openedFolders.find(
-                (folder) => folder.currentFolderId === item.id,
-              )
-            }
-            onCreateFolder={createFolder}
-            onFolderToggle={toggleFolder}
-            onUpdateFolders={fetchData}
-            isLoading={item.id === loadingFolderId}
-          />
-        ))}
+        {data?.map((item, index) =>
+          item.type === "folder" ? (
+            <FolderItem
+              key={item.id}
+              item={item}
+              index={index}
+              isFolderOpened={
+                !!openedFolders.find(
+                  (folder) => folder.currentFolderId === item.id,
+                )
+              }
+              onCreateFolder={createFolder}
+              onFolderToggle={toggleFolder}
+              onUpdateFolders={fetchData}
+              isLoading={item.id === loadingFolderId}
+            />
+          ) : (
+            <NoteItem key={item.id} item={item} />
+          ),
+        )}
       </View>
 
       <Divider style={{ marginHorizontal: -20, marginBottom: 20 }} />

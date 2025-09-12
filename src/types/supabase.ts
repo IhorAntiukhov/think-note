@@ -39,45 +39,45 @@ export type Database = {
     Tables: {
       notes: {
         Row: {
-          content: string | null;
-          created_at: string | null;
+          content: string;
+          created_at: string;
           depth: number;
           folder_id: number | null;
           id: number;
-          marked: boolean | null;
+          marked: boolean;
           name: string;
-          num_visits: number | null;
-          num_words: number | null;
+          num_visits: number;
+          num_words: number;
           type: Database["public"]["Enums"]["TreeItemType"];
-          updated_at: string | null;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
-          content?: string | null;
-          created_at?: string | null;
+          content?: string;
+          created_at?: string;
           depth?: number;
           folder_id?: number | null;
           id?: number;
-          marked?: boolean | null;
+          marked?: boolean;
           name: string;
-          num_visits?: number | null;
-          num_words?: number | null;
+          num_visits?: number;
+          num_words?: number;
           type: Database["public"]["Enums"]["TreeItemType"];
-          updated_at?: string | null;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
-          content?: string | null;
-          created_at?: string | null;
+          content?: string;
+          created_at?: string;
           depth?: number;
           folder_id?: number | null;
           id?: number;
-          marked?: boolean | null;
+          marked?: boolean;
           name?: string;
-          num_visits?: number | null;
-          num_words?: number | null;
+          num_visits?: number;
+          num_words?: number;
           type?: Database["public"]["Enums"]["TreeItemType"];
-          updated_at?: string | null;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [

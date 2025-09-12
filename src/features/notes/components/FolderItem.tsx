@@ -1,5 +1,4 @@
 import { COLORS } from "@/src/constants/theme";
-import { Tables } from "@/src/types/supabase";
 import { confirmationAlert, errorAlert } from "@/src/utils/alerts";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -11,10 +10,11 @@ import { ActivityIndicator, Menu } from "react-native-paper";
 import { deleteFolder } from "../api/notesRepo";
 import treeListStyles from "../styles/treeList.styles";
 import OnCreateFolder from "../types/onCreateFolder";
+import { FolderRow } from "../types/rowTypes";
 import FolderNameInput from "./FolderNameInput";
 
-interface TreeItemProps {
-  item: Tables<"notes">;
+interface FolderItemProps {
+  item: FolderRow;
   index: number;
   isFolderOpened: boolean;
   onCreateFolder: OnCreateFolder;
@@ -27,7 +27,7 @@ interface TreeItemProps {
   isLoading: boolean;
 }
 
-export default function TreeItem({
+export default function FolderItem({
   item,
   index,
   isFolderOpened,
@@ -35,7 +35,7 @@ export default function TreeItem({
   onFolderToggle,
   onUpdateFolders,
   isLoading,
-}: TreeItemProps) {
+}: FolderItemProps) {
   const [isFolderCreationStarted, setIsFolderCreationStarted] = useState(false);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
@@ -52,7 +52,8 @@ export default function TreeItem({
   }, []);
 
   const openNoteCreationPage = useCallback(() => {
-    router.replace({
+    setIsMenuOpened(false);
+    router.push({
       pathname: "/(notes)/new-note",
       params: {
         folderId: item.id,
@@ -84,20 +85,18 @@ export default function TreeItem({
     <View style={{ marginLeft: leftOffset }}>
       <View style={treeListStyles.itemContainerWithGap}>
         <Pressable style={treeListStyles.itemContainer} onPress={toggleFolder}>
-          {item && (
-            <MaterialCommunityIcons
-              name={isFolderOpened ? "chevron-down" : "chevron-right"}
-              size={28}
-            />
-          )}
+          <MaterialCommunityIcons
+            name={isFolderOpened ? "chevron-down" : "chevron-right"}
+            size={28}
+          />
           <View style={treeListStyles.itemContainer}>
             <MaterialIcons
               name="folder"
               size={28}
-              color={COLORS.secondary}
+              color={COLORS.secondaryLight}
               style={{ marginRight: 5 }}
             />
-            {item && <Text style={treeListStyles.text}>{item.name}</Text>}
+            <Text style={treeListStyles.text}>{item.name}</Text>
           </View>
         </Pressable>
         {isFolderOpened && (

@@ -3,6 +3,7 @@ import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useRef } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import supabase from "../api/supabase";
 import useAuthStore from "../store/authStore";
@@ -45,7 +46,9 @@ export default function AuthLayout() {
       style={{ flex: 1, backgroundColor: COLORS.secondary }}
       edges={["left", "right", "top"]}
     >
-      <Stack screenOptions={{ headerShown: false }} />
+      <View style={{ backgroundColor: COLORS.background, height: "100%" }}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </View>
     </SafeAreaView>
   );
 }

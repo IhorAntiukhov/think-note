@@ -45,7 +45,7 @@ export default function FolderNameInput({
       <MaterialIcons
         name="folder"
         size={28}
-        color={COLORS.secondary}
+        color={COLORS.secondaryLight}
         style={{
           marginRight: 5,
           marginLeft: nested ? 28 : 0,
