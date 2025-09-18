@@ -1,10 +1,14 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
+import useDialogStore from "@/src/store/dialogStore";
 import sharedStyles from "@/src/styles/shared.styles";
-import { Tables } from "@/src/types/supabase";
-import { confirmationAlert, errorAlert, infoAlert } from "@/src/utils/alerts";
 import debounce from "@/src/utils/debounce";
-import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
+import {
+  EditorBridge,
+  RichText,
+  Toolbar,
+  useEditorBridge,
+} from "@10play/tentap-editor";
 import { EventArg, NavigationAction } from "@react-navigation/native";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -17,13 +21,17 @@ import {
   incrementNoteVisits,
   insertNote,
   markNote,
+  NoteData,
   updateNote,
 } from "../api/notesRepo";
-import NoteStats from "../components/NoteStats";
+import { addTagsToNotes, replaceNoteTags } from "../api/tagsNotesRepo";
+import NoteInfo from "../components/NoteInfo";
 import singleNoteStyles from "../styles/singleNote.styles";
 
-const countWords = (text: string) => {
-  return text.trim().split(/\s+/).length;
+const countWords = async (editor: EditorBridge) => {
+  const rawText = await editor.getText();
+
+  return rawText.trim().split(/\s+/).length;
 };
 
 interface NewNote {
@@ -35,7 +43,7 @@ interface NewNote {
 
 interface EditNote {
   type: "editNote";
-  noteData: Tables<"notes"> | null;
+  noteData: NoteData | null;
   noteName: string;
   isMarked: boolean;
 }
@@ -60,18 +68,21 @@ export default function SingleNote({
   const [oldNoteContent, setOldNoteContent] = useState("<p></p>");
   const [isNoteMarked, setIsNoteMarked] = useState(isMarked || false);
 
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const isInitialDataSet = useRef(false);
   const disableSaveCheck = useRef(false);
 
   const { user } = useAuthStore().session!;
+  const { showInfoDialog, showConfirmDialog } = useDialogStore();
 
   const editor = useEditorBridge({
     autofocus: true,
     avoidIosKeyboard: true,
     onChange: debounce(async () => {
-      const rawText = await editor.getText();
+      const numWords = await countWords(editor);
 
-      setWordCount(countWords(rawText));
+      setWordCount(numWords);
     }, 1000),
   });
 
@@ -80,6 +91,10 @@ export default function SingleNote({
       if (noteData && noteName && !isInitialDataSet.current) {
         setWordCount(noteData.num_words || 0);
         setOldNoteContent(noteData.content);
+        console.log(noteData);
+        setSelectedTags(
+          noteData.tags_notes.map((tagNote) => tagNote.tag_id.toString()),
+        );
         editor.setContent(noteData.content || "");
 
         await incrementNoteVisits(noteData.id, noteData.num_visits || 0);
@@ -108,7 +123,7 @@ export default function SingleNote({
         const rawText = await editor.getHTML();
 
         if (rawText !== oldNoteContent) {
-          confirmationAlert(
+          showConfirmDialog(
             "Go back",
             "You have unsaved changes. Are you sure you want to go back to the notes page?",
             () => navigation.dispatch(event.data.action),
@@ -124,7 +139,7 @@ export default function SingleNote({
     return () => {
       navigation.removeListener("beforeRemove", callback);
     };
-  }, [navigation, editor, oldNoteContent]);
+  }, [navigation, editor, oldNoteContent, showConfirmDialog]);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -135,9 +150,6 @@ export default function SingleNote({
       "keyboardDidHide",
       async () => {
         setHideNoteStats(false);
-
-        const rawText = await editor.getText();
-        setWordCount(countWords(rawText));
       },
     );
 
@@ -157,14 +169,14 @@ export default function SingleNote({
 
       setIsNoteMarked(!isNoteMarked);
     } catch (error) {
-      errorAlert("Failed to mark note", error as PostgrestError);
+      showInfoDialog("Failed to mark note", (error as PostgrestError).message);
     }
-  }, [isNoteMarked, noteData]);
+  }, [isNoteMarked, noteData, showInfoDialog]);
 
   const onDeleteNote = useCallback(() => {
     if (!noteData) return;
 
-    confirmationAlert(
+    showConfirmDialog(
       "Note deletion",
       "Are you sure you want to delete this note?",
       async () => {
@@ -176,66 +188,105 @@ export default function SingleNote({
           disableSaveCheck.current = true;
           router.back();
         } catch (error) {
-          errorAlert("Failed to delete note", error as PostgrestError);
+          showInfoDialog(
+            "Failed to delete note",
+            (error as PostgrestError).message,
+          );
         }
       },
     );
-  }, [noteData, router]);
+  }, [noteData, router, showConfirmDialog, showInfoDialog]);
 
   const onCreateNote = useCallback(async () => {
     if (!noteTitle) {
-      infoAlert("Note creation", "Enter the title of your note");
+      showInfoDialog("Note creation", "Enter the title of your note");
       return;
     }
 
     try {
       const rawText = await editor.getHTML();
+      const numWords = await countWords(editor);
 
-      const error = await insertNote(
+      const { data, error: noteError } = await insertNote(
         noteTitle,
         user.id,
         +(folderId as string),
         +(depth as string) + 1,
         rawText,
-        countWords(rawText),
+        numWords,
       );
 
-      if (error) throw error;
+      if (noteError) throw noteError;
+
+      if (data) {
+        const tagsNoteError = await addTagsToNotes(
+          selectedTags.map((tagId) => ({
+            tag_id: +tagId,
+            note_id: data.id,
+            user_id: user.id,
+          })),
+        );
+
+        if (tagsNoteError) throw noteError;
+      }
 
       disableSaveCheck.current = true;
       router.back();
     } catch (error) {
-      errorAlert("Note creation failed", error as PostgrestError);
+      showInfoDialog("Note creation failed", (error as PostgrestError).message);
     }
-  }, [router, noteTitle, depth, editor, folderId, user.id]);
+  }, [
+    router,
+    noteTitle,
+    depth,
+    editor,
+    folderId,
+    user.id,
+    selectedTags,
+    showInfoDialog,
+  ]);
 
   const onUpdateNote = useCallback(async () => {
     if (!noteData) return;
 
     if (!noteTitle) {
-      infoAlert("Note creation", "Enter the title of your note");
+      showInfoDialog("Note creation", "Enter the title of your note");
       return;
     }
 
     try {
       const rawText = await editor.getHTML();
+      const numWords = await countWords(editor);
 
-      const { data, error } = await updateNote(
+      const { data, error: noteError } = await updateNote(
         noteData.id,
         noteTitle,
         rawText,
-        countWords(rawText),
+        numWords,
       );
 
-      if (error) throw error;
+      if (noteError) throw noteError;
 
-      if (data) setOldNoteContent(data.content);
+      if (data) {
+        setOldNoteContent(data.content);
 
-      infoAlert("Note updation", "Note successfully updated");
+        const tagsError = await replaceNoteTags(
+          data.id,
+          selectedTags.map((tagId) => ({
+            tag_id: +tagId,
+            note_id: data.id,
+            user_id: user.id,
+          })),
+        );
+
+        if (tagsError) throw tagsError;
+      }
+
+      showInfoDialog("Note updation", "Note successfully updated");
     } catch (error) {
-      errorAlert("Note updation failed", error as PostgrestError);
+      showInfoDialog("Note updation failed", (error as PostgrestError).message);
     }
-  }, [editor, noteData, noteTitle]);
+  }, [editor, noteData, noteTitle, selectedTags, user.id, showInfoDialog]);
 
   const onSaveNote = useCallback(async () => {
     if (type === "newNote") await onCreateNote();
@@ -275,11 +326,13 @@ export default function SingleNote({
 
         {!hideNoteStats && (
           <>
-            <NoteStats
+            <NoteInfo
               createdAt={noteData?.created_at}
               updatedAt={noteData?.updated_at}
               numVisits={noteData?.num_visits}
               numWords={wordCount}
+              selectedTags={selectedTags}
+              onChangeSelectedTags={setSelectedTags}
             />
 
             <Divider style={sharedStyles.divider} />

@@ -1,7 +1,9 @@
-import { useState } from "react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { ComponentProps, useState } from "react";
 import { Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { COLORS } from "../constants/theme";
+import TagsDropdownItem from "../features/notes/components/TagsDropdownItem";
 import dropdownStyles from "../styles/dropdown.styles";
 import DropdownOption from "../types/dropdownOption";
 
@@ -10,6 +12,7 @@ interface DropdownMenuProps {
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
+  leftIcon?: ComponentProps<typeof MaterialIcons>["name"];
 }
 
 export default function DropdownMenu({
@@ -17,6 +20,7 @@ export default function DropdownMenu({
   options,
   value,
   onChange,
+  leftIcon,
 }: DropdownMenuProps) {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -32,9 +36,8 @@ export default function DropdownMenu({
           dropdownStyles.dropdown,
           isFocus && { borderColor: COLORS.primary },
         ]}
-        placeholderStyle={dropdownStyles.placeholderStyle}
-        selectedTextStyle={dropdownStyles.selectedTextStyle}
-        iconStyle={dropdownStyles.iconStyle}
+        placeholderStyle={dropdownStyles.placeholder}
+        selectedTextStyle={dropdownStyles.selectedText}
         data={options}
         maxHeight={300}
         labelField="label"
@@ -46,6 +49,17 @@ export default function DropdownMenu({
           onChange(item.value);
           setIsFocus(false);
         }}
+        renderItem={(item) => <TagsDropdownItem item={item} />}
+        renderLeftIcon={
+          leftIcon &&
+          (() => (
+            <MaterialIcons
+              name={leftIcon}
+              size={20}
+              style={dropdownStyles.icon}
+            />
+          ))
+        }
       />
     </View>
   );

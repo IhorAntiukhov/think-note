@@ -1,8 +1,9 @@
 import supabase from "@/src/api/supabase";
 import { updateUser } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
-import { errorAlert } from "@/src/utils/alerts";
+import useDialogStore from "@/src/store/dialogStore";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { PostgrestError } from "@supabase/supabase-js";
 import * as Font from "expo-font";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -10,7 +11,6 @@ import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import profileStyles from "../styles/profile.styles";
-import { PostgrestError } from "@supabase/supabase-js";
 
 interface AvatarProps {
   minimized?: boolean;
@@ -18,6 +18,8 @@ interface AvatarProps {
 
 export default function Avatar({ minimized = false }: AvatarProps) {
   const { session, avatarUrl, setAvatarUrl } = useAuthStore();
+  const { showInfoDialog } = useDialogStore();
+
   const user = session?.user;
 
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
@@ -102,7 +104,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
 
       downloadFromStorage(data.path);
     } catch (error) {
-      errorAlert("Avatar upload failed", error as PostgrestError);
+      showInfoDialog("Avatar upload failed", (error as PostgrestError).message);
     } finally {
       setIsAvatarLoading(false);
     }
@@ -144,7 +146,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
           <MaterialCommunityIcons
             name="account-edit"
             size={size}
-            color={"white"}
+            color={minimized ? "black" : "white"}
             onPress={minimized ? undefined : uploadAvatar}
             style={{ marginBottom: 10 }}
           />

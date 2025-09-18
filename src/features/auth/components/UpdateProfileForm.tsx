@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import { updateUserWithMessage } from "@/src/features/auth/api/auth";
+import useDialogStore from "@/src/store/dialogStore";
 import Input from "@/src/ui/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -53,17 +54,25 @@ export default function UpdateProfileForm() {
     resolver: zodResolver(ideaWordsNumFormSchema),
   });
 
+  const { showInfoDialog } = useDialogStore();
+
   const updateUsername = handleUsernameSubmit(async (formData) => {
-    await updateUserWithMessage("username", formData.username);
+    await updateUserWithMessage("username", showInfoDialog, formData.username);
   });
 
   const updateEmail = handleEmailSubmit(async (formData) => {
-    await updateUserWithMessage("email", undefined, formData.email);
+    await updateUserWithMessage(
+      "email",
+      showInfoDialog,
+      undefined,
+      formData.email,
+    );
   });
 
   const updatePassword = handlePasswordSubmit(async (formData) => {
     await updateUserWithMessage(
       "password",
+      showInfoDialog,
       undefined,
       undefined,
       formData.password,

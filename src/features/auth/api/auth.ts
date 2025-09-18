@@ -1,4 +1,3 @@
-import { errorAlert, infoAlert } from "@/src/utils/alerts";
 import { AuthError, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import supabase from "../../../api/supabase";
@@ -69,6 +68,7 @@ export async function updateUser(
 
 export async function updateUserWithMessage(
   paramName: FormDataKey,
+  showInfoAlert: (title: string, content: string) => void,
   username?: string,
   email?: string,
   password?: string,
@@ -82,14 +82,14 @@ export async function updateUserWithMessage(
       ? "Password updated successfully"
       : `${paramName.charAt(0).toUpperCase()}${paramName.substring(1)} updated to ${username || email || password}`;
 
-    infoAlert("User update succeded", alertMessage);
+    showInfoAlert("User update succeded", alertMessage);
   } catch (error) {
-    errorAlert("User update failed", error as AuthError);
+    showInfoAlert("User update failed", (error as AuthError).message);
   }
 }
 
 export async function deleteUser(user: User) {
-  const { data, error } = await supabase.auth.admin.deleteUser(user.id);
+  const { error } = await supabase.auth.admin.deleteUser(user.id);
 
-  return { data, error };
+  return error;
 }

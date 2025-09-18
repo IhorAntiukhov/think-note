@@ -41,4 +41,12 @@ export default StyleSheet.create({
     margin: 0,
     marginRight: 5,
   },
+  dropdownContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
 });

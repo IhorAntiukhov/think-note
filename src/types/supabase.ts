@@ -109,6 +109,78 @@ export type Database = {
         };
         Relationships: [];
       };
+      tags: {
+        Row: {
+          color: string;
+          id: number;
+          label: string;
+          user_id: string;
+        };
+        Insert: {
+          color: string;
+          id?: number;
+          label: string;
+          user_id: string;
+        };
+        Update: {
+          color?: string;
+          id?: number;
+          label?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tags_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tags_notes: {
+        Row: {
+          id: number;
+          note_id: number;
+          tag_id: number;
+          user_id: string;
+        };
+        Insert: {
+          id?: number;
+          note_id: number;
+          tag_id: number;
+          user_id: string;
+        };
+        Update: {
+          id?: number;
+          note_id?: number;
+          tag_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tags_notes_note_id_fkey";
+            columns: ["note_id"];
+            isOneToOne: false;
+            referencedRelation: "notes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tags_notes_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tags_notes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;

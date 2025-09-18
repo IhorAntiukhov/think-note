@@ -3,7 +3,6 @@ import { signUp } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
-import { errorAlert, infoAlert } from "@/src/utils/alerts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
 import React, { useState } from "react";
@@ -13,6 +12,7 @@ import authStyles from "../styles/auth.styles";
 import { SignUpFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import schema from "../zod/signUp";
+import useDialogStore from "@/src/store/dialogStore";
 
 interface SignUpFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -28,6 +28,7 @@ export default function SignUpForm({ switchForm }: SignUpFormProps) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const { showInfoDialog } = useDialogStore();
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -40,9 +41,9 @@ export default function SignUpForm({ switchForm }: SignUpFormProps) {
 
       if (error) throw error;
 
-      infoAlert("Sign up succeded", "Check your email to confirm sign up");
+      showInfoDialog("Sign up succeded", "Check your email to confirm sign up");
     } catch (error) {
-      errorAlert("Sign up failed", error as AuthError);
+      showInfoDialog("Sign up failed", (error as AuthError).message);
     } finally {
       setIsLoading(false);
     }

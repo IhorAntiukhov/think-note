@@ -1,7 +1,9 @@
 import { signOut } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
+import useDialogStore from "@/src/store/dialogStore";
 import OutlineButton from "@/src/ui/OutlineButton";
-import { useState } from "react";
+import { AuthError } from "@supabase/supabase-js";
+import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import { Card, Divider } from "react-native-paper";
 import Avatar from "../components/Avatar";
@@ -13,9 +15,20 @@ import profileStyles from "../styles/profile.styles";
 
 export default function UserProfile() {
   const { session } = useAuthStore();
+  const { showInfoDialog } = useDialogStore();
   const user = session?.user;
 
   const [coverHeight, setCoverHeight] = useState(0);
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      const error = await signOut();
+
+      if (error) throw error;
+    } catch (error) {
+      showInfoDialog("User sign out failed", (error as AuthError).message);
+    }
+  }, [showInfoDialog]);
 
   if (!user) return null;
 
@@ -49,7 +62,7 @@ export default function UserProfile() {
               icon="logout"
               style={{ flexGrow: 1 }}
               themeColor="secondary"
-              onPress={signOut}
+              onPress={handleSignOut}
             >
               Sign out
             </OutlineButton>

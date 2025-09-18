@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import AuthLayout from "@/src/navigation/AuthLayout";
+import DialogModal from "@/src/ui/Dialog";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -18,6 +19,7 @@ export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
       <AuthLayout />
+      <DialogModal />
     </PaperProvider>
   );
 }

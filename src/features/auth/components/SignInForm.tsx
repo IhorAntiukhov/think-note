@@ -3,7 +3,6 @@ import { signInWithEmailAndPassword } from "@/src/features/auth/api/auth";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
-import { errorAlert } from "@/src/utils/alerts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { AuthError } from "@supabase/supabase-js";
@@ -15,6 +14,7 @@ import authStyles from "../styles/auth.styles";
 import { SignInFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import schema from "../zod/signIn";
+import useDialogStore from "@/src/store/dialogStore";
 
 interface SignInFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -30,6 +30,7 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const { showInfoDialog } = useDialogStore();
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -41,7 +42,7 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
 
       if (error) throw error;
     } catch (error) {
-      errorAlert("Sign in failed", error as AuthError);
+      showInfoDialog("Sign in failed", (error as AuthError).message);
     } finally {
       setIsLoading(false);
     }

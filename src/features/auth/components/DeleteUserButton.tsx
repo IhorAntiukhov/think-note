@@ -1,36 +1,35 @@
-import supabase from "@/src/api/supabase";
 import { deleteUser, signOut } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
+import useDialogStore from "@/src/store/dialogStore";
 import OutlineButton from "@/src/ui/OutlineButton";
-import { confirmationAlert, errorAlert } from "@/src/utils/alerts";
 import { AuthError } from "@supabase/supabase-js";
 import { useCallback } from "react";
+import { deleteUserData } from "../api/userRepo";
 
 export default function DeleteUserButton() {
-  const { session } = useAuthStore();
-  const user = session?.user;
+  const { user } = useAuthStore().session!;
+  const { showInfoDialog, showConfirmDialog } = useDialogStore();
 
   const showUserDeletionDialog = useCallback(() => {
-    confirmationAlert(
+    showConfirmDialog(
       "User deletion",
       "Are you sure you want to delete your account? This operation is irreversible and will remove all the notes.",
       async () => {
         try {
-          const { error: StorageError } = await supabase.storage
-            .from("Avatars")
-            .remove([user!.id]);
-          if (StorageError) throw StorageError;
+          const databaseError = await deleteUserData(user.id);
+          if (databaseError) throw databaseError;
 
-          const { error: AuthError } = await deleteUser(user!);
-          if (AuthError) throw AuthError;
+          const authError = await deleteUser(user!);
+          if (authError) throw authError;
 
-          await signOut();
+          const signOutError = await signOut();
+          if (signOutError) throw signOutError;
         } catch (error) {
-          errorAlert("User deletion failed", error as AuthError);
+          showInfoDialog("User deletion failed", (error as AuthError).message);
         }
       },
     );
-  }, [user]);
+  }, [user, showConfirmDialog, showInfoDialog]);
 
   return (
     <OutlineButton

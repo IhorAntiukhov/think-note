@@ -1,7 +1,7 @@
-import { Tables } from "@/src/types/supabase";
+import { NoteData } from "../api/notesRepo";
 
 type RowWithoutContent = Omit<
-  Tables<"notes">,
+  NonNullable<NoteData>,
   | "user_id"
   | "created_at"
   | "updated_at"

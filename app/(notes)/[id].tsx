@@ -1,15 +1,16 @@
-import { getSingleNote } from "@/src/features/notes/api/notesRepo";
+import { getSingleNote, NoteData } from "@/src/features/notes/api/notesRepo";
 import SingleNote from "@/src/features/notes/screens/SingleNote";
 import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
-import { Tables } from "@/src/types/supabase";
-import { errorAlert } from "@/src/utils/alerts";
+import useDialogStore from "@/src/store/dialogStore";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
 export default function EditNote() {
   const { id, name, isMarked } = useLocalSearchParams();
-  const [noteData, setNoteData] = useState<Tables<"notes"> | null>(null);
+  const [noteData, setNoteData] = useState<NoteData | null>(null);
+
+  const { showInfoDialog } = useDialogStore();
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -17,14 +18,15 @@ export default function EditNote() {
         const { data, error } = await getSingleNote(+(id as string));
 
         if (error) throw error;
+
         if (data) setNoteData(data);
       } catch (error) {
-        errorAlert("Fetch failed", error as PostgrestError);
+        showInfoDialog("Fetch failed", (error as PostgrestError).message);
       }
     };
 
     fetchNote();
-  }, [id]);
+  }, [id, showInfoDialog]);
 
   return (
     <ScreenScrollWrapper>

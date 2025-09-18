@@ -1,6 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
-import { errorAlert } from "@/src/utils/alerts";
+import useDialogStore from "@/src/store/dialogStore";
 import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -16,6 +16,7 @@ export default function UserStats() {
   const [numIdeas] = useState(0);
 
   const { session } = useAuthStore();
+  const { showInfoDialog } = useDialogStore();
   const user = session!.user;
 
   useFocusEffect(
@@ -32,12 +33,15 @@ export default function UserStats() {
             data.find((value) => value.type === "folder")?.count || 0,
           );
         } catch (error) {
-          errorAlert("User stats fetch failed", error as PostgrestError);
+          showInfoDialog(
+            "User stats fetch failed",
+            (error as PostgrestError).message,
+          );
         }
       };
 
       fetchStats();
-    }, [user.id]),
+    }, [user.id, showInfoDialog]),
   );
 
   return (

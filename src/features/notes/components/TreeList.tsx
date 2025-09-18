@@ -1,10 +1,12 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
+import useAvailableTagsStore from "@/src/store/availableTagsStore";
+import useDialogStore from "@/src/store/dialogStore";
+import sharedStyles from "@/src/styles/shared.styles";
 import OutlineButton from "@/src/ui/OutlineButton";
-import { errorAlert } from "@/src/utils/alerts";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import {
   ActivityIndicator,
@@ -19,11 +21,12 @@ import {
   getTopFolders,
   insertFolder,
 } from "../api/notesRepo";
+import { getAvailableTags } from "../api/tagsRepo";
 import SORTING_OPTIONS from "../constants/sortingOptions";
 import allNotesStyles from "../styles/allNotes.styles";
 import treeListStyles from "../styles/treeList.styles";
 import { TreeItemRow } from "../types/rowTypes";
-import sortItems from "../utils/sortItems";
+import filterAndSortItems from "../utils/sortItems";
 import FolderItem from "./FolderItem";
 import FolderNameInput from "./FolderNameInput";
 import NoteItem from "./NoteItem";
@@ -53,12 +56,40 @@ export default function TreeList() {
 
   const [sortBy, setSortBy] = useState<string>(SORTING_OPTIONS[0].value);
   const [isAscending, setIsAscending] = useState(false);
-
   const [showOnlyMarked, setShowOnlyMarked] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const [searchQuery, setSearchQuery] = useState("");
 
   const { user } = useAuthStore().session!;
+  const { setAvailableTags } = useAvailableTagsStore();
+  const { showInfoDialog } = useDialogStore();
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const { data, error } = await getAvailableTags(user.id);
+
+        if (error) throw error;
+
+        if (data)
+          setAvailableTags(
+            data.map(({ id, label, color }) => ({
+              value: id.toString(),
+              label,
+              color,
+            })),
+          );
+      } catch (error) {
+        showInfoDialog(
+          "Failed to fetch tags",
+          (error as PostgrestError).message,
+        );
+      }
+    };
+
+    fetchTags();
+  }, [user.id, setAvailableTags, showInfoDialog]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -72,14 +103,22 @@ export default function TreeList() {
 
       if (error) throw error;
 
-      if (data) setData(sortItems(data));
+      if (data) setData(filterAndSortItems(data, selectedTags));
     } catch (error) {
-      errorAlert("Fetch failed", error as PostgrestError);
+      showInfoDialog("Fetch failed", (error as PostgrestError).message);
     } finally {
       setLoadingFolderId(null);
       setLoadingAllState(LoadingAllState.notLoading);
     }
-  }, [isAscending, sortBy, user.id, openedFolders, showOnlyMarked]);
+  }, [
+    isAscending,
+    sortBy,
+    user.id,
+    openedFolders,
+    showOnlyMarked,
+    selectedTags,
+    showInfoDialog,
+  ]);
 
   const expandOrCollapseFolders = useCallback(
     async (expand: boolean) => {
@@ -96,7 +135,7 @@ export default function TreeList() {
         if (error) throw error;
 
         if (data) {
-          const sortedData = sortItems(data);
+          const sortedData = filterAndSortItems(data, selectedTags);
 
           setData(sortedData);
 
@@ -117,12 +156,19 @@ export default function TreeList() {
           }
         }
       } catch (error) {
-        errorAlert("Fetch failed", error as PostgrestError);
+        showInfoDialog("Fetch failed", (error as PostgrestError).message);
       } finally {
         setLoadingAllState(LoadingAllState.notLoading);
       }
     },
-    [isAscending, sortBy, showOnlyMarked, user.id],
+    [
+      isAscending,
+      sortBy,
+      showOnlyMarked,
+      user.id,
+      selectedTags,
+      showInfoDialog,
+    ],
   );
 
   useFocusEffect(
@@ -153,18 +199,27 @@ export default function TreeList() {
 
         if (error) throw error;
 
-        const newData = data ? [...data] : [];
-        newData.splice(parentFolderId ? parentIndex + 1 : 0, 0, newFolder!);
-        setData(newData);
+        if (newFolder) {
+          const newData = data ? [...data] : [];
+
+          newData.splice(parentFolderId ? parentIndex + 1 : 0, 0, {
+            ...newFolder,
+            tags_notes: [],
+          });
+          setData(newData);
+        }
 
         await fetchData();
       } catch (error) {
-        errorAlert("Folder creation failder", error as PostgrestError);
+        showInfoDialog(
+          "Folder creation failder",
+          (error as PostgrestError).message,
+        );
       } finally {
         setNewFolderDepth(null);
       }
     },
-    [user.id, data, fetchData],
+    [user.id, data, fetchData, showInfoDialog],
   );
 
   const toggleFolder = useCallback(
@@ -261,7 +316,7 @@ export default function TreeList() {
         </View>
       </View>
 
-      <Divider style={{ marginHorizontal: -20, marginBottom: 10 }} />
+      <Divider style={sharedStyles.divider} />
 
       <SortingAndFiltering
         sortBy={sortBy}
@@ -270,7 +325,11 @@ export default function TreeList() {
         onChangeIsAscending={setIsAscending}
         isMarked={showOnlyMarked}
         onChangeIsMarked={setShowOnlyMarked}
+        selectedTags={selectedTags}
+        onChangeSelectedTags={setSelectedTags}
       />
+
+      <Divider style={[sharedStyles.divider, { marginBottom: 10 }]} />
 
       {newFolderDepth && (
         <FolderNameInput

@@ -5,9 +5,14 @@ export default StyleSheet.create({
   container: {
     backgroundColor: COLORS.background,
   },
+  multiselectContainer: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+  },
   dropdown: {
-    height: 50,
-    borderColor: "gray",
+    height: 45,
+    borderColor: "black",
     borderWidth: 2,
     borderRadius: 10,
     paddingStart: 14,
@@ -25,14 +30,45 @@ export default StyleSheet.create({
     paddingHorizontal: 8,
     fontSize: 14,
   },
-  placeholderStyle: {
+  placeholder: {
     fontSize: 16,
   },
-  selectedTextStyle: {
+  selectedText: {
     fontSize: 16,
   },
-  iconStyle: {
-    width: 20,
-    height: 20,
+  itemContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 17,
+    paddingVertical: 14,
+  },
+  tagLabel: {
+    fontSize: 16,
+    flexGrow: 1,
+  },
+  tagColor: {
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+  },
+  changeTagButtons: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 5,
+  },
+  selectedItem: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginTop: 8,
+    marginRight: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
   },
 });

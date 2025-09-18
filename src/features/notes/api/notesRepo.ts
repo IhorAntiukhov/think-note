@@ -51,12 +51,14 @@ export async function getTopFolders(
 export async function getSingleNote(id: number) {
   const { data, error } = await supabase
     .from("notes")
-    .select("*")
+    .select("*, tags_notes ( tag_id )")
     .eq("id", id)
     .single();
 
   return { data, error };
 }
+
+export type NoteData = Awaited<ReturnType<typeof getSingleNote>>["data"];
 
 export async function insertFolder(
   folderName: string,
@@ -89,19 +91,23 @@ export async function insertNote(
   content: string,
   numWords: number,
 ) {
-  const { error } = await supabase.from("notes").insert([
-    {
-      name: noteName,
-      type: "note",
-      user_id: userId,
-      folder_id: folderId,
-      depth,
-      content,
-      num_words: numWords,
-    },
-  ]);
+  const { data, error } = await supabase
+    .from("notes")
+    .insert([
+      {
+        name: noteName,
+        type: "note",
+        user_id: userId,
+        folder_id: folderId,
+        depth,
+        content,
+        num_words: numWords,
+      },
+    ])
+    .select()
+    .single();
 
-  return error;
+  return { data, error };
 }
 
 export async function updateNote(
@@ -156,11 +162,11 @@ function getGeneralQuery(
 ) {
   const query = supabase
     .from("notes")
-    .select("id, name, marked, folder_id, depth, type")
+    .select("id, name, marked, folder_id, depth, type, tags_notes ( tag_id )")
     .eq("user_id", userId)
     .order(sortBy, { ascending });
 
-  if (!showOnlyMarked) return query;
+  if (showOnlyMarked) return query.or("marked.eq.true, type.eq.folder");
 
-  return query.or("marked.eq.true, type.eq.folder");
+  return query;
 }

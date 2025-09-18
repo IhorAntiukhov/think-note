@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import { confirmationAlert, errorAlert } from "@/src/utils/alerts";
+import useDialogStore from "@/src/store/dialogStore";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -39,6 +39,8 @@ export default function FolderItem({
   const [isFolderCreationStarted, setIsFolderCreationStarted] = useState(false);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
+  const { showInfoDialog, showConfirmDialog } = useDialogStore();
+
   const router = useRouter();
   const leftOffset = (item.depth - 1) * 28;
 
@@ -63,7 +65,7 @@ export default function FolderItem({
   }, [router, item.id, item.depth]);
 
   const onDeleteFolder = useCallback(async () => {
-    confirmationAlert(
+    showConfirmDialog(
       "Folder deletion",
       `Are you sure you want to delete folder "${item?.name}"? This operation is irreversible and will remove all the nested notes and folders.`,
       async () => {
@@ -74,12 +76,15 @@ export default function FolderItem({
 
           onUpdateFolders!();
         } catch (error) {
-          errorAlert("Folder deletion failed", error as PostgrestError);
+          showInfoDialog(
+            "Folder deletion failed",
+            (error as PostgrestError).message,
+          );
         }
       },
     );
     setIsMenuOpened(false);
-  }, [item, onUpdateFolders]);
+  }, [item, onUpdateFolders, showConfirmDialog, showInfoDialog]);
 
   return (
     <View style={{ marginLeft: leftOffset }}>
