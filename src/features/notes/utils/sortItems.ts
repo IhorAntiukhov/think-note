@@ -5,7 +5,6 @@ export default function filterAndSortItems(
   tagIds: string[],
 ) {
   if (tagIds.length) {
-    console.log(tagIds);
     return sortItems(
       items.filter(
         (value) =>

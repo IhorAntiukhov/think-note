@@ -91,7 +91,6 @@ export default function SingleNote({
       if (noteData && noteName && !isInitialDataSet.current) {
         setWordCount(noteData.num_words || 0);
         setOldNoteContent(noteData.content);
-        console.log(noteData);
         setSelectedTags(
           noteData.tags_notes.map((tagNote) => tagNote.tag_id.toString()),
         );

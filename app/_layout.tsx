@@ -1,6 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import AuthLayout from "@/src/navigation/AuthLayout";
-import DialogModal from "@/src/ui/Dialog";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -18,8 +18,9 @@ const theme = {
 export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
-      <AuthLayout />
-      <DialogModal />
+      <GestureHandlerRootView>
+        <AuthLayout />
+      </GestureHandlerRootView>
     </PaperProvider>
   );
 }

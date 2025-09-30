@@ -145,11 +145,29 @@ export async function incrementNoteVisits(id: number, numVisits: number) {
 export async function deleteFolder(id: number) {
   const { error } = await supabase.from("notes").delete().eq("id", id);
 
-  return { error };
+  return error;
+}
+
+export async function renameFolder(id: number, name: string) {
+  const { error } = await supabase.from("notes").update({ name }).eq("id", id);
+
+  return error;
 }
 
 export async function deleteNote(id: number) {
   const { error } = await supabase.from("notes").delete().eq("id", id);
+
+  return error;
+}
+
+export async function changeParentFolder(
+  itemId: number,
+  newParentFolderId: number,
+) {
+  const { error } = await supabase
+    .from("notes")
+    .update({ folder_id: newParentFolderId })
+    .eq("id", itemId);
 
   return error;
 }

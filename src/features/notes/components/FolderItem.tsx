@@ -5,10 +5,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import {
+  Text,
+  TextInput,
+  TextInputEndEditingEvent,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ActivityIndicator, Menu } from "react-native-paper";
-import { deleteFolder } from "../api/notesRepo";
+import { deleteFolder, renameFolder } from "../api/notesRepo";
 import treeListStyles from "../styles/treeList.styles";
+import FolderInputState from "../types/folderInputState";
 import OnCreateFolder from "../types/onCreateFolder";
 import { FolderRow } from "../types/rowTypes";
 import FolderNameInput from "./FolderNameInput";
@@ -16,6 +23,9 @@ import FolderNameInput from "./FolderNameInput";
 interface FolderItemProps {
   item: FolderRow;
   index: number;
+  selectedIndex: number | null;
+  setSelectedIndex: (index: number | null) => void;
+  moveItem: (index: number) => void;
   isFolderOpened: boolean;
   onCreateFolder: OnCreateFolder;
   onFolderToggle: (
@@ -30,13 +40,18 @@ interface FolderItemProps {
 export default function FolderItem({
   item,
   index,
+  selectedIndex,
+  setSelectedIndex,
+  moveItem,
   isFolderOpened,
   onCreateFolder,
   onFolderToggle,
   onUpdateFolders,
   isLoading,
 }: FolderItemProps) {
-  const [isFolderCreationStarted, setIsFolderCreationStarted] = useState(false);
+  const [folderInputState, setFolderInputState] = useState(
+    FolderInputState.closed,
+  );
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
   const { showInfoDialog, showConfirmDialog } = useDialogStore();
@@ -45,11 +60,15 @@ export default function FolderItem({
   const leftOffset = (item.depth - 1) * 28;
 
   const toggleFolder = () => {
-    onFolderToggle!(!isFolderOpened, item.id, item.folder_id);
+    if (selectedIndex === null) {
+      onFolderToggle!(!isFolderOpened, item.id, item.folder_id);
+    } else if (selectedIndex !== index) {
+      moveItem(index);
+    }
   };
 
   const startFolderCreation = useCallback(() => {
-    setIsFolderCreationStarted(true);
+    setFolderInputState(FolderInputState.createFolder);
     setIsMenuOpened(false);
   }, []);
 
@@ -70,7 +89,7 @@ export default function FolderItem({
       `Are you sure you want to delete folder "${item?.name}"? This operation is irreversible and will remove all the nested notes and folders.`,
       async () => {
         try {
-          const { error } = await deleteFolder(item!.id);
+          const error = await deleteFolder(item!.id);
 
           if (error) throw error;
 
@@ -86,10 +105,51 @@ export default function FolderItem({
     setIsMenuOpened(false);
   }, [item, onUpdateFolders, showConfirmDialog, showInfoDialog]);
 
+  const startFolderEdition = useCallback(() => {
+    setFolderInputState(FolderInputState.renameFolder);
+    setIsMenuOpened(false);
+  }, []);
+
+  const onRenameFolder = useCallback(
+    async (event: TextInputEndEditingEvent) => {
+      try {
+        const error = await renameFolder(item!.id, event.nativeEvent.text);
+
+        if (error) throw error;
+
+        onUpdateFolders!();
+        setFolderInputState(FolderInputState.closed);
+      } catch (error) {
+        showInfoDialog(
+          "Folder edition failed",
+          (error as PostgrestError).message,
+        );
+      }
+    },
+    [item, onUpdateFolders, showInfoDialog],
+  );
+
+  const onSelectFolder = useCallback(() => {
+    if (selectedIndex === null) {
+      setSelectedIndex(index);
+    } else if (selectedIndex === index) {
+      setSelectedIndex(null);
+    }
+  }, [index, selectedIndex, setSelectedIndex]);
+
   return (
     <View style={{ marginLeft: leftOffset }}>
-      <View style={treeListStyles.itemContainerWithGap}>
-        <Pressable style={treeListStyles.itemContainer} onPress={toggleFolder}>
+      <View
+        style={[
+          treeListStyles.itemContainerWithGap,
+          selectedIndex === index && { opacity: 0.5 },
+        ]}
+      >
+        <TouchableOpacity
+          style={treeListStyles.itemContainer}
+          onPress={toggleFolder}
+          onLongPress={onSelectFolder}
+        >
           <MaterialCommunityIcons
             name={isFolderOpened ? "chevron-down" : "chevron-right"}
             size={28}
@@ -101,9 +161,20 @@ export default function FolderItem({
               color={COLORS.secondaryLight}
               style={{ marginRight: 5 }}
             />
-            <Text style={treeListStyles.text}>{item.name}</Text>
+            {folderInputState === FolderInputState.renameFolder ? (
+              <TextInput
+                style={[treeListStyles.input, { paddingVertical: 0 }]}
+                placeholder="Enter folder name"
+                defaultValue={item.name}
+                onEndEditing={onRenameFolder}
+                maxLength={20}
+                autoFocus
+              />
+            ) : (
+              <Text style={treeListStyles.text}>{item.name}</Text>
+            )}
           </View>
-        </Pressable>
+        </TouchableOpacity>
         {isFolderOpened && (
           <Menu
             visible={isMenuOpened}
@@ -132,14 +203,19 @@ export default function FolderItem({
               onPress={onDeleteFolder}
               title="Delete folder"
             />
+            <Menu.Item
+              leadingIcon="pencil"
+              onPress={startFolderEdition}
+              title="Rename folder"
+            />
           </Menu>
         )}
         {isLoading && <ActivityIndicator size={28} color={COLORS.secondary} />}
       </View>
-      {isFolderCreationStarted && (
+      {folderInputState === FolderInputState.createFolder && (
         <FolderNameInput
           nested
-          setIsFolderCreationStarted={setIsFolderCreationStarted}
+          setIsFolderCreationStarted={setFolderInputState}
           onCreateFolder={onCreateFolder}
           index={index}
           itemId={item.id}

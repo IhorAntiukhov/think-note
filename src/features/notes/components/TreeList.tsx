@@ -12,10 +12,14 @@ import {
   ActivityIndicator,
   Divider,
   IconButton,
+  Portal,
   Searchbar,
+  Surface,
 } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Avatar from "../../auth/components/Avatar";
 import {
+  changeParentFolder,
   getAllItems,
   getItemsInFolders,
   getTopFolders,
@@ -58,6 +62,11 @@ export default function TreeList() {
   const [isAscending, setIsAscending] = useState(false);
   const [showOnlyMarked, setShowOnlyMarked] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(
+    null,
+  );
+  const { top } = useSafeAreaInsets();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -222,6 +231,37 @@ export default function TreeList() {
     [user.id, data, fetchData, showInfoDialog],
   );
 
+  const moveItem = useCallback(
+    async (destinationFolderIndex: number) => {
+      if (selectedItemIndex === null) return;
+
+      if (data[selectedItemIndex].type === "folder") {
+        for (let i = destinationFolderIndex; i >= 0; i--) {
+          if (data[i].id === data[selectedItemIndex].id) return;
+        }
+      }
+
+      try {
+        const error = await changeParentFolder(
+          data[selectedItemIndex].id,
+          data[destinationFolderIndex].id,
+        );
+
+        if (error) throw error;
+
+        await fetchData();
+      } catch (error) {
+        showInfoDialog(
+          "Failed to move item",
+          (error as PostgrestError).message,
+        );
+      } finally {
+        setSelectedItemIndex(null);
+      }
+    },
+    [selectedItemIndex, data, fetchData, showInfoDialog],
+  );
+
   const toggleFolder = useCallback(
     (
       isOpened: boolean,
@@ -277,6 +317,24 @@ export default function TreeList() {
 
   return (
     <>
+      {selectedItemIndex !== null && (
+        <Portal>
+          <Surface
+            style={{
+              marginTop: top + 10,
+              marginHorizontal: 10,
+              backgroundColor: "white",
+              padding: 10,
+              borderRadius: 10,
+            }}
+          >
+            <Text style={{ fontSize: 18, textAlign: "center" }}>
+              Select the folder where you want to move the selected item
+            </Text>
+          </Surface>
+        </Portal>
+      )}
+
       <Searchbar
         placeholder="Search"
         onChangeText={setSearchQuery}
@@ -350,12 +408,15 @@ export default function TreeList() {
         </View>
       )}
       <View style={treeListStyles.listContainer}>
-        {data?.map((item, index) =>
+        {data.map((item, index) =>
           item.type === "folder" ? (
             <FolderItem
-              key={item.id}
               item={item}
+              key={item.id}
               index={index}
+              selectedIndex={selectedItemIndex}
+              setSelectedIndex={setSelectedItemIndex}
+              moveItem={moveItem}
               isFolderOpened={
                 !!openedFolders.find(
                   (folder) => folder.currentFolderId === item.id,
@@ -367,7 +428,13 @@ export default function TreeList() {
               isLoading={item.id === loadingFolderId}
             />
           ) : (
-            <NoteItem key={item.id} item={item} />
+            <NoteItem
+              item={item}
+              key={item.id}
+              index={index}
+              selectedIndex={selectedItemIndex}
+              setSelectedIndex={setSelectedItemIndex}
+            />
           ),
         )}
       </View>

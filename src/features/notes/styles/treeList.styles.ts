@@ -33,6 +33,7 @@ export default StyleSheet.create({
   input: {
     fontSize: 18,
     width: "100%",
+    paddingStart: 0,
   },
   iconButton: {
     borderRadius: "50%",
