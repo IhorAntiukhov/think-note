@@ -24,14 +24,14 @@ import {
   NoteData,
   updateNote,
 } from "../api/notesRepo";
-import { addTagsToNotes, replaceNoteTags } from "../api/tagsNotesRepo";
 import NoteInfo from "../components/NoteInfo";
 import singleNoteStyles from "../styles/singleNote.styles";
 
 const countWords = async (editor: EditorBridge) => {
   const rawText = await editor.getText();
+  const trimmedText = rawText.trim();
 
-  return rawText.trim().split(/\s+/).length;
+  return trimmedText ? trimmedText.split(/\s+/).length : 0;
 };
 
 interface NewNote {
@@ -83,7 +83,7 @@ export default function SingleNote({
       const numWords = await countWords(editor);
 
       setWordCount(numWords);
-    }, 1000),
+    }, 50),
   });
 
   useEffect(() => {
@@ -206,28 +206,17 @@ export default function SingleNote({
       const rawText = await editor.getHTML();
       const numWords = await countWords(editor);
 
-      const { data, error: noteError } = await insertNote(
+      const { error } = await insertNote(
         noteTitle,
         user.id,
         +(folderId as string),
         +(depth as string) + 1,
         rawText,
         numWords,
+        selectedTags.map((tagId) => +tagId),
       );
 
-      if (noteError) throw noteError;
-
-      if (data) {
-        const tagsNoteError = await addTagsToNotes(
-          selectedTags.map((tagId) => ({
-            tag_id: +tagId,
-            note_id: data.id,
-            user_id: user.id,
-          })),
-        );
-
-        if (tagsNoteError) throw noteError;
-      }
+      if (error) throw error;
 
       disableSaveCheck.current = true;
       router.back();
@@ -257,29 +246,18 @@ export default function SingleNote({
       const rawText = await editor.getHTML();
       const numWords = await countWords(editor);
 
-      const { data, error: noteError } = await updateNote(
+      const { error: noteError } = await updateNote(
         noteData.id,
+        user.id,
         noteTitle,
         rawText,
         numWords,
+        selectedTags.map((tagId) => +tagId),
       );
 
       if (noteError) throw noteError;
 
-      if (data) {
-        setOldNoteContent(data.content);
-
-        const tagsError = await replaceNoteTags(
-          data.id,
-          selectedTags.map((tagId) => ({
-            tag_id: +tagId,
-            note_id: data.id,
-            user_id: user.id,
-          })),
-        );
-
-        if (tagsError) throw tagsError;
-      }
+      setOldNoteContent(rawText);
 
       showInfoDialog("Note updation", "Note successfully updated");
     } catch (error) {

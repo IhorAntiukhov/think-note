@@ -34,7 +34,7 @@ export default function UserProfile() {
 
   return (
     <View style={authStyles.container}>
-      <Card style={{ position: "relative" }}>
+      <Card style={{ position: "relative", maxWidth: 640 }}>
         <Card.Cover
           source={require("@/src/assets/images/profile-cover.jpg")}
           onLayout={(event) => {

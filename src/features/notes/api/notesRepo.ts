@@ -84,46 +84,45 @@ export async function insertFolder(
 }
 
 export async function insertNote(
-  noteName: string,
+  name: string,
   userId: string,
   folderId: number,
   depth: number,
   content: string,
   numWords: number,
+  tagIds: number[],
 ) {
-  const { data, error } = await supabase
-    .from("notes")
-    .insert([
-      {
-        name: noteName,
-        type: "note",
-        user_id: userId,
-        folder_id: folderId,
-        depth,
-        content,
-        num_words: numWords,
-      },
-    ])
-    .select()
-    .single();
+  const { error } = await supabase.rpc("insert_note", {
+    name,
+    userid: userId,
+    folderid: folderId,
+    depth,
+    content,
+    numwords: numWords,
+    tagids: tagIds,
+  });
 
-  return { data, error };
+  return { error };
 }
 
 export async function updateNote(
   id: number,
-  noteName: string,
+  userId: string,
+  name: string,
   content: string,
   numWords: number,
+  tagIds: number[],
 ) {
-  const { data, error } = await supabase
-    .from("notes")
-    .update({ name: noteName, content, num_words: numWords })
-    .eq("id", id)
-    .select()
-    .single();
+  const { error } = await supabase.rpc("update_note", {
+    noteid: id,
+    userid: userId,
+    newname: name,
+    newcontent: content,
+    newnumwords: numWords,
+    tagids: tagIds,
+  });
 
-  return { data, error };
+  return { error };
 }
 
 export async function markNote(id: number, isMarked: boolean) {
@@ -161,13 +160,15 @@ export async function deleteNote(id: number) {
 }
 
 export async function changeParentFolder(
-  itemId: number,
-  newParentFolderId: number,
+  rowid: number,
+  currentdepth: number,
+  newfolderid?: number,
 ) {
-  const { error } = await supabase
-    .from("notes")
-    .update({ folder_id: newParentFolderId })
-    .eq("id", itemId);
+  const { error } = await supabase.rpc("move_item", {
+    currentdepth,
+    newfolderid,
+    rowid,
+  });
 
   return error;
 }

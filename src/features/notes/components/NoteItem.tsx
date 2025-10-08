@@ -2,7 +2,7 @@ import { COLORS } from "@/src/constants/theme";
 import useAvailableTagsStore from "@/src/store/availableTagsStore";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { useCallback, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Menu } from "react-native-paper";
@@ -25,12 +25,14 @@ export default function NoteItem({
 }: NoteItemProps) {
   const [isTagsMenuOpened, setIsTagsMenuOpened] = useState(false);
   const { availableTags } = useAvailableTagsStore();
+
   const router = useRouter();
+  const pathname = useSegments();
 
   const leftOffset = (item.depth - 1) * 28;
 
   const openNote = useCallback(() => {
-    if (selectedIndex === null) {
+    if (selectedIndex === null && pathname[pathname.length - 1] !== "[id]") {
       router.push({
         pathname: "/(notes)/[id]",
         params: {
@@ -40,7 +42,7 @@ export default function NoteItem({
         },
       });
     }
-  }, [selectedIndex, router, item.id, item.name, item.marked]);
+  }, [selectedIndex, router, pathname, item.id, item.name, item.marked]);
 
   const onSelectNote = useCallback(() => {
     if (selectedIndex === null) {

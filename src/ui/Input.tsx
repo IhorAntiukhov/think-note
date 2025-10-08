@@ -41,7 +41,13 @@ export default function Input<T extends FieldValues>({
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             mode="outlined"
-            left={<TextInput.Icon icon={icon} color={theme.colors.secondary} />}
+            left={
+              <TextInput.Icon
+                icon={icon}
+                color={theme.colors.secondary}
+                tabIndex={-1}
+              />
+            }
             right={
               type === "password" ? (
                 <TextInput.Icon

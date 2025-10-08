@@ -35,7 +35,7 @@ export default function LoginForm() {
 
   return (
     <View style={authStyles.container}>
-      <Card>
+      <Card style={{ width: "100%", maxWidth: 640 }}>
         <Card.Content>
           {selectedForm === SelectedForm.SignIn && (
             <SignInForm switchForm={setSelectedForm} />

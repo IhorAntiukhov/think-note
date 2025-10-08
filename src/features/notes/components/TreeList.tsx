@@ -232,19 +232,31 @@ export default function TreeList() {
   );
 
   const moveItem = useCallback(
-    async (destinationFolderIndex: number) => {
+    async (destinationFolderIndex: number | null) => {
       if (selectedItemIndex === null) return;
 
-      if (data[selectedItemIndex].type === "folder") {
-        for (let i = destinationFolderIndex; i >= 0; i--) {
-          if (data[i].id === data[selectedItemIndex].id) return;
+      if (
+        data[selectedItemIndex].type === "folder" &&
+        destinationFolderIndex !== null
+      ) {
+        let currentFolderIndex = destinationFolderIndex;
+
+        while (currentFolderIndex !== -1) {
+          currentFolderIndex = data.findIndex(
+            (item) => item.id === currentFolderIndex,
+          );
+
+          if (currentFolderIndex === selectedItemIndex) return;
         }
       }
 
       try {
         const error = await changeParentFolder(
           data[selectedItemIndex].id,
-          data[destinationFolderIndex].id,
+          data[selectedItemIndex].depth,
+          destinationFolderIndex === null
+            ? undefined
+            : data[destinationFolderIndex].id,
         );
 
         if (error) throw error;
@@ -275,6 +287,8 @@ export default function TreeList() {
         ]);
         setLoadingFolderId(currentFolderId);
       } else {
+        let previousFolderId = 0;
+
         const newFolders = [...openedFolders];
         const filteredFolders = newFolders.filter(
           ({
@@ -293,7 +307,6 @@ export default function TreeList() {
           },
         );
 
-        let previousFolderId = 0;
         setOpenedFolders(filteredFolders);
 
         const newData = [...data];
@@ -408,6 +421,19 @@ export default function TreeList() {
         </View>
       )}
       <View style={treeListStyles.listContainer}>
+        {selectedItemIndex !== null &&
+          data[selectedItemIndex].type === "folder" &&
+          data[selectedItemIndex].folder_id !== null && (
+            <OutlineButton
+              onPress={() => moveItem(null)}
+              style={{
+                alignSelf: "flex-start",
+              }}
+              icon="folder"
+            >
+              Move to the main directory
+            </OutlineButton>
+          )}
         {data.map((item, index) =>
           item.type === "folder" ? (
             <FolderItem

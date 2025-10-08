@@ -7,6 +7,8 @@ export type Json =
   | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4";
   };
@@ -186,7 +188,45 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      choose_parent_folders: {
+        Args: { newfolderid: number; oldfolderid: number };
+        Returns: {
+          id: number;
+        }[];
+      };
+      get_parent_folders: {
+        Args: { rowid: number };
+        Returns: {
+          id: number;
+        }[];
+      };
+      insert_note: {
+        Args: {
+          content: string;
+          depth: number;
+          folderid: number;
+          name: string;
+          numwords: number;
+          tagids: number[];
+          userid: string;
+        };
+        Returns: undefined;
+      };
+      move_item: {
+        Args: { currentdepth: number; newfolderid?: number; rowid: number };
+        Returns: undefined;
+      };
+      update_note: {
+        Args: {
+          newcontent: string;
+          newname: string;
+          newnumwords: number;
+          noteid: number;
+          tagids: number[];
+          userid: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       TreeItemType: "folder" | "note";

@@ -33,10 +33,14 @@ export default function DialogModal() {
     }
   }, [content, dialogType]);
 
+  if (dialogType === DialogType.unvisible) return null;
+
   const onOk = () => {
     if (dialogType === DialogType.prompt && !value) return;
 
     hideDialog();
+
+    if (dialogType !== DialogType.prompt) return;
 
     const oldValue = value;
     setValue("");
@@ -52,7 +56,7 @@ export default function DialogModal() {
   return (
     <Portal>
       <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-        <Dialog visible={dialogType !== DialogType.unvisible}>
+        <Dialog visible={true}>
           <Dialog.Title>{title}</Dialog.Title>
           <Dialog.Content>
             {dialogType === DialogType.prompt ? (
