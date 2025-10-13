@@ -13,7 +13,6 @@ import {
   Divider,
   IconButton,
   Portal,
-  Searchbar,
   Surface,
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -67,8 +66,6 @@ export default function TreeList() {
     null,
   );
   const { top } = useSafeAreaInsets();
-
-  const [searchQuery, setSearchQuery] = useState("");
 
   const { user } = useAuthStore().session!;
   const { setAvailableTags } = useAvailableTagsStore();
@@ -347,13 +344,6 @@ export default function TreeList() {
           </Surface>
         </Portal>
       )}
-
-      <Searchbar
-        placeholder="Search"
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        style={{ marginBottom: 20 }}
-      />
 
       <View style={allNotesStyles.mainDirectory}>
         <Avatar minimized />

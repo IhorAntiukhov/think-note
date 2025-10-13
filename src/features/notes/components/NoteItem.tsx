@@ -1,11 +1,11 @@
 import { COLORS } from "@/src/constants/theme";
 import useAvailableTagsStore from "@/src/store/availableTagsStore";
+import ContextMenu from "@/src/ui/ContextMenu";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter, useSegments } from "expo-router";
 import { useCallback, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Menu } from "react-native-paper";
 import treeListStyles from "../styles/treeList.styles";
 import { NoteRow } from "../types/rowTypes";
 import TagsDropdownItem from "./TagsDropdownItem";
@@ -14,7 +14,8 @@ interface NoteItemProps {
   item: NoteRow;
   index: number;
   selectedIndex: number | null;
-  setSelectedIndex: (index: number | null) => void;
+  setSelectedIndex?: (index: number | null) => void;
+  inSearchResults?: boolean;
 }
 
 export default function NoteItem({
@@ -22,6 +23,7 @@ export default function NoteItem({
   index,
   selectedIndex,
   setSelectedIndex,
+  inSearchResults,
 }: NoteItemProps) {
   const [isTagsMenuOpened, setIsTagsMenuOpened] = useState(false);
   const { availableTags } = useAvailableTagsStore();
@@ -46,9 +48,9 @@ export default function NoteItem({
 
   const onSelectNote = useCallback(() => {
     if (selectedIndex === null) {
-      setSelectedIndex(index);
+      setSelectedIndex?.(index);
     } else if (selectedIndex === index) {
-      setSelectedIndex(null);
+      setSelectedIndex?.(null);
     }
   }, [index, selectedIndex, setSelectedIndex]);
 
@@ -59,7 +61,7 @@ export default function NoteItem({
         opacity: selectedIndex === index ? 0.5 : undefined,
       }}
       onPress={openNote}
-      onLongPress={onSelectNote}
+      onLongPress={inSearchResults ? onSelectNote : undefined}
     >
       <View style={treeListStyles.itemContainerWithGap}>
         <MaterialIcons name="note" size={28} color={COLORS.secondaryLighter} />
@@ -73,8 +75,8 @@ export default function NoteItem({
         )}
         <Text style={treeListStyles.text}>{item.name}</Text>
         {!!item.tags_notes.length && (
-          <Menu
-            visible={isTagsMenuOpened}
+          <ContextMenu
+            isOpened={isTagsMenuOpened}
             onDismiss={() => setIsTagsMenuOpened(false)}
             anchor={
               <MaterialCommunityIcons
@@ -102,7 +104,7 @@ export default function NoteItem({
                 />
               );
             })}
-          </Menu>
+          </ContextMenu>
         )}
       </View>
     </TouchableOpacity>

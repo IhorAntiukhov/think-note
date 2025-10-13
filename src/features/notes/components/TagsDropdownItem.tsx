@@ -52,7 +52,12 @@ export default function TagsDropdownItem({
   };
 
   return (
-    <View style={dropdownStyles.itemContainer}>
+    <View
+      style={[
+        dropdownStyles.itemContainer,
+        { minWidth: readonly ? 165 : undefined },
+      ]}
+    >
       {item.color && (
         <View
           style={[

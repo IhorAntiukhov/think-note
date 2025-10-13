@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import useDialogStore from "@/src/store/dialogStore";
+import ContextMenu from "@/src/ui/ContextMenu";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -176,8 +177,8 @@ export default function FolderItem({
           </View>
         </TouchableOpacity>
         {isFolderOpened && (
-          <Menu
-            visible={isMenuOpened}
+          <ContextMenu
+            isOpened={isMenuOpened}
             onDismiss={() => setIsMenuOpened(false)}
             anchor={
               <MaterialCommunityIcons
@@ -208,7 +209,7 @@ export default function FolderItem({
               onPress={startFolderEdition}
               title="Rename folder"
             />
-          </Menu>
+          </ContextMenu>
         )}
         {isLoading && <ActivityIndicator size={28} color={COLORS.secondary} />}
       </View>

@@ -11,7 +11,7 @@ import dialogStyles from "../styles/dialog.styles";
 import sharedStyles from "../styles/shared.styles";
 import DialogType from "../types/dialogType";
 
-export default function DialogModal() {
+export default function ModalDialog() {
   const {
     dialogType,
     title,
