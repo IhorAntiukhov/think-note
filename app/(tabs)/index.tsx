@@ -1,10 +1,10 @@
-import React from "react";
-import { Text, View } from "react-native";
+import Home from "@/src/features/home/screens/Home";
+import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
 
 export default function index() {
   return (
-    <View>
-      <Text>index</Text>
-    </View>
+    <ScreenScrollWrapper>
+      <Home />
+    </ScreenScrollWrapper>
   );
 }

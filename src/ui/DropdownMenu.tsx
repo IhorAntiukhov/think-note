@@ -3,7 +3,7 @@ import { ComponentProps, useState } from "react";
 import { Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { COLORS } from "../constants/theme";
-import TagsDropdownItem from "../features/notes/components/TagsDropdownItem";
+import TagsDropdownItem from "../features/sortingAndFiltering/components/TagsDropdownItem";
 import dropdownStyles from "../styles/dropdown.styles";
 import DropdownOption from "../types/dropdownOption";
 

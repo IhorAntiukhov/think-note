@@ -16,7 +16,10 @@ import {
   Surface,
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Avatar from "../../auth/components/Avatar";
+import AvatarWithUserName from "../../avatar/components/AvatarWithUserName";
+import { getAvailableTags } from "../../sortingAndFiltering/api/tagsRepo";
+import SortingAndFiltering from "../../sortingAndFiltering/components/SortingAndFiltering";
+import SORTING_OPTIONS from "../../sortingAndFiltering/constants/sortingOptions";
 import {
   changeParentFolder,
   getAllItems,
@@ -24,8 +27,6 @@ import {
   getTopFolders,
   insertFolder,
 } from "../api/notesRepo";
-import { getAvailableTags } from "../api/tagsRepo";
-import SORTING_OPTIONS from "../constants/sortingOptions";
 import allNotesStyles from "../styles/allNotes.styles";
 import treeListStyles from "../styles/treeList.styles";
 import { TreeItemRow } from "../types/rowTypes";
@@ -33,7 +34,6 @@ import filterAndSortItems from "../utils/sortItems";
 import FolderItem from "./FolderItem";
 import FolderNameInput from "./FolderNameInput";
 import NoteItem from "./NoteItem";
-import SortingAndFiltering from "./SortingAndFiltering";
 
 interface OpenedFolderType {
   currentFolderId: number;
@@ -346,10 +346,7 @@ export default function TreeList() {
       )}
 
       <View style={allNotesStyles.mainDirectory}>
-        <Avatar minimized />
-        <Text style={{ fontSize: 18, flexGrow: 1 }}>
-          {user.user_metadata.username}
-        </Text>
+        <AvatarWithUserName />
 
         <View style={allNotesStyles.treeListControlButtons}>
           {loadingAllState === LoadingAllState.loadingExpand ? (

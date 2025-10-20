@@ -4,7 +4,6 @@ import ContextMenu from "@/src/ui/ContextMenu";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
-import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   Text,
@@ -15,6 +14,7 @@ import {
 } from "react-native";
 import { ActivityIndicator, Menu } from "react-native-paper";
 import { deleteFolder, renameFolder } from "../api/notesRepo";
+import useOpenNewNote from "../hooks/useOpenNewNote";
 import treeListStyles from "../styles/treeList.styles";
 import FolderInputState from "../types/folderInputState";
 import OnCreateFolder from "../types/onCreateFolder";
@@ -56,8 +56,12 @@ export default function FolderItem({
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
   const { showInfoDialog, showConfirmDialog } = useDialogStore();
+  const openNoteCreationPage = useOpenNewNote(
+    item.depth,
+    item.id,
+    setIsMenuOpened,
+  );
 
-  const router = useRouter();
   const leftOffset = (item.depth - 1) * 28;
 
   const toggleFolder = () => {
@@ -72,17 +76,6 @@ export default function FolderItem({
     setFolderInputState(FolderInputState.createFolder);
     setIsMenuOpened(false);
   }, []);
-
-  const openNoteCreationPage = useCallback(() => {
-    setIsMenuOpened(false);
-    router.push({
-      pathname: "/(notes)/new-note",
-      params: {
-        folderId: item.id,
-        depth: item.depth,
-      },
-    });
-  }, [router, item.id, item.depth]);
 
   const onDeleteFolder = useCallback(async () => {
     showConfirmDialog(

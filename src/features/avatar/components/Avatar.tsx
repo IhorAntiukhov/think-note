@@ -10,7 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import profileStyles from "../styles/profile.styles";
+import avatarStyles from "../styles/avatar.styles";
 
 interface AvatarProps {
   minimized?: boolean;
@@ -114,9 +114,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
     <Image
       source={{ uri: avatarUrl }}
       style={
-        minimized
-          ? profileStyles.avatarImageMinimized
-          : profileStyles.avatarImage
+        minimized ? avatarStyles.avatarImageMinimized : avatarStyles.avatarImage
       }
       alt="User avatar image"
       onLoad={() => setIsAvatarLoading(false)}

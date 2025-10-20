@@ -21,6 +21,7 @@ export default StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    flexShrink: 1,
   },
   noDataWrapper: {
     marginVertical: 10,
@@ -41,13 +42,5 @@ export default StyleSheet.create({
     borderColor: COLORS.primary,
     margin: 0,
     marginRight: 5,
-  },
-  dropdownContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 10,
   },
 });

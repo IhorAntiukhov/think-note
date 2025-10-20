@@ -86,20 +86,20 @@ export async function insertFolder(
 export async function insertNote(
   name: string,
   userId: string,
-  folderId: number,
   depth: number,
   content: string,
   numWords: number,
   tagIds: number[],
+  folderId?: number,
 ) {
   const { error } = await supabase.rpc("insert_note", {
     name,
-    userid: userId,
-    folderid: folderId,
+    user_id: userId,
+    folder_id: folderId,
     depth,
     content,
-    numwords: numWords,
-    tagids: tagIds,
+    num_words: numWords,
+    tag_ids: tagIds,
   });
 
   return { error };

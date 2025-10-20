@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import singleNoteStyles from "../styles/singleNote.styles";
-import TagsDropdown from "./TagsDropdown";
+import TagsDropdown from "../../sortingAndFiltering/components/TagsDropdown";
 
 interface NoteInfoProps {
   createdAt?: string;

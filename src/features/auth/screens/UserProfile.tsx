@@ -6,7 +6,7 @@ import { AuthError } from "@supabase/supabase-js";
 import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import { Card, Divider } from "react-native-paper";
-import Avatar from "../components/Avatar";
+import Avatar from "../../avatar/components/Avatar";
 import DeleteUserButton from "../components/DeleteUserButton";
 import UpdateProfileForm from "../components/UpdateProfileForm";
 import UserStats from "../components/UserStats";

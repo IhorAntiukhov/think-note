@@ -209,11 +209,11 @@ export default function SingleNote({
       const { error } = await insertNote(
         noteTitle,
         user.id,
-        +(folderId as string),
         +(depth as string) + 1,
         rawText,
         numWords,
         selectedTags.map((tagId) => +tagId),
+        folderId === undefined ? +(folderId as string) : undefined,
       );
 
       if (error) throw error;

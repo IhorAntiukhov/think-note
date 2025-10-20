@@ -204,11 +204,11 @@ export type Database = {
         Args: {
           content: string;
           depth: number;
-          folderid: number;
+          folder_id?: number;
           name: string;
-          numwords: number;
-          tagids: number[];
-          userid: string;
+          num_words: number;
+          tag_ids: number[];
+          user_id: string;
         };
         Returns: undefined;
       };
