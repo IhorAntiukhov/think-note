@@ -9,6 +9,7 @@ import { deleteUserData } from "../api/userRepo";
 export default function DeleteUserButton() {
   const { user } = useAuthStore().session!;
   const { showInfoDialog, showConfirmDialog } = useDialogStore();
+  const { setAvatarUrl } = useAuthStore();
 
   const showUserDeletionDialog = useCallback(() => {
     showConfirmDialog(
@@ -18,6 +19,8 @@ export default function DeleteUserButton() {
         try {
           const databaseError = await deleteUserData(user.id);
           if (databaseError) throw databaseError;
+
+          setAvatarUrl(null);
 
           const authError = await deleteUser(user!);
           if (authError) throw authError;
@@ -29,7 +32,7 @@ export default function DeleteUserButton() {
         }
       },
     );
-  }, [user, showConfirmDialog, showInfoDialog]);
+  }, [user, showConfirmDialog, showInfoDialog, setAvatarUrl]);
 
   return (
     <OutlineButton

@@ -25,10 +25,3 @@ export const passwordFormSchema = zod
     error: FORM_ERROR_MESSAGES.passwordsUnmatch,
     path: ["confirmPassword"],
   });
-
-export const ideaWordsNumFormSchema = zod.object({
-  ideaWordsNum: zod
-    .number(FORM_ERROR_MESSAGES.fieldRequired)
-    .gte(1, FORM_ERROR_MESSAGES.ideaTooShort)
-    .lte(15, FORM_ERROR_MESSAGES.ideaTooLong),
-});

@@ -4,7 +4,7 @@ import { use } from "react";
 import { Text, View } from "react-native";
 import { NoteData } from "../api/noteListsStore";
 import homeStyles from "../styles/home.styles";
-import { NotesContext } from "./NotesList";
+import NotesContext from "../context/notesContext";
 
 interface NoteProps {
   item: NoteData;

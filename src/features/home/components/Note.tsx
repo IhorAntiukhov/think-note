@@ -33,7 +33,7 @@ export default function Note({ item }: NoteProps) {
 
           <Divider style={[sharedStyles.divider, { marginHorizontal: -16 }]} />
 
-          <View style={{ height: 150, overflow: "hidden" }}>
+          <View style={{ height: 150, overflow: "hidden", width: 200 }}>
             <RenderHTML source={{ html: item.content }} contentWidth={200} />
           </View>
 

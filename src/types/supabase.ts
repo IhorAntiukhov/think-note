@@ -39,6 +39,54 @@ export type Database = {
   };
   public: {
     Tables: {
+      ideas: {
+        Row: {
+          content: string;
+          created_at: string;
+          folder_id: number | null;
+          id: number;
+          note_id: number | null;
+          type: Database["public"]["Enums"]["TreeItemType"];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          content: string;
+          created_at?: string;
+          folder_id?: number | null;
+          id?: number;
+          note_id?: number | null;
+          type: Database["public"]["Enums"]["TreeItemType"];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          content?: string;
+          created_at?: string;
+          folder_id?: number | null;
+          id?: number;
+          note_id?: number | null;
+          type?: Database["public"]["Enums"]["TreeItemType"];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ideas_note_id_fkey";
+            columns: ["note_id"];
+            isOneToOne: false;
+            referencedRelation: "notes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ideas_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notes: {
         Row: {
           content: string;
@@ -214,6 +262,15 @@ export type Database = {
       };
       move_item: {
         Args: { currentdepth: number; newfolderid?: number; rowid: number };
+        Returns: undefined;
+      };
+      save_idea: {
+        Args: {
+          content: string;
+          folder_id?: number;
+          note_id: number;
+          user_id: string;
+        };
         Returns: undefined;
       };
       update_note: {

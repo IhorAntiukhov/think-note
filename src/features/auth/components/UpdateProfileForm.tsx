@@ -3,20 +3,19 @@ import { updateUserWithMessage } from "@/src/features/auth/api/auth";
 import useDialogStore from "@/src/store/dialogStore";
 import Input from "@/src/ui/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
+import DefaultPromptInput from "../../ideas/components/DefaultPromptInput";
 import profileStyles from "../styles/profile.styles";
 import {
   EmailFormData,
-  IdeaWordsNumFormData,
   PasswordFormData,
   UsernameFormData,
 } from "../types/forms";
 import {
   emailFormSchema,
-  ideaWordsNumFormSchema,
   passwordFormSchema,
   usernameFormSchema,
 } from "../zod/separatedUserForms";
@@ -46,38 +45,57 @@ export default function UpdateProfileForm() {
     resolver: zodResolver(passwordFormSchema),
   });
 
-  const {
-    control: ideaWordsNumControl,
-    formState: { errors: ideaWordsNumErrors },
-    handleSubmit: handleIdeaWordsNumSubmit,
-  } = useForm<IdeaWordsNumFormData>({
-    resolver: zodResolver(ideaWordsNumFormSchema),
-  });
-
   const { showInfoDialog } = useDialogStore();
 
-  const updateUsername = handleUsernameSubmit(async (formData) => {
-    await updateUserWithMessage("username", showInfoDialog, formData.username);
-  });
+  const updateUsername = handleUsernameSubmit(
+    useCallback(
+      async (formData) => {
+        await updateUserWithMessage({
+          paramName: "username",
+          showInfoDialog,
+          username: formData.username,
+        });
+      },
+      [showInfoDialog],
+    ),
+  );
 
-  const updateEmail = handleEmailSubmit(async (formData) => {
-    await updateUserWithMessage(
-      "email",
-      showInfoDialog,
-      undefined,
-      formData.email,
-    );
-  });
+  const updateEmail = handleEmailSubmit(
+    useCallback(
+      async (formData) => {
+        await updateUserWithMessage({
+          paramName: "email",
+          showInfoDialog,
+          email: formData.email,
+        });
+      },
+      [showInfoDialog],
+    ),
+  );
 
-  const updatePassword = handlePasswordSubmit(async (formData) => {
-    await updateUserWithMessage(
-      "password",
-      showInfoDialog,
-      undefined,
-      undefined,
-      formData.password,
-    );
-  });
+  const updatePassword = handlePasswordSubmit(
+    useCallback(
+      async (formData) => {
+        await updateUserWithMessage({
+          paramName: "password",
+          showInfoDialog,
+          password: formData.password,
+        });
+      },
+      [showInfoDialog],
+    ),
+  );
+
+  const updateDefaultPrompt = useCallback(
+    async (defaultPrompt: string) => {
+      await updateUserWithMessage({
+        paramName: "defaultPrompt",
+        showInfoDialog,
+        defaultPrompt,
+      });
+    },
+    [showInfoDialog],
+  );
 
   return (
     <>
@@ -147,15 +165,9 @@ export default function UpdateProfileForm() {
         />
       </View>
 
-      <Input
-        name="ideaWordsNum"
-        control={ideaWordsNumControl}
-        error={!!ideaWordsNumErrors.ideaWordsNum}
-        errorText={ideaWordsNumErrors.ideaWordsNum?.message}
-        icon="lightbulb"
-        label="Number of words in ideas"
-        type="number-pad"
-        outerStyle={{ marginBottom: 20 }}
+      <DefaultPromptInput
+        mode="update user"
+        onPressAction={updateDefaultPrompt}
       />
     </>
   );

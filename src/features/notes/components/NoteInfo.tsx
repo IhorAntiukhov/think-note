@@ -1,27 +1,20 @@
 import { COLORS } from "@/src/constants/theme";
 import sharedStyles from "@/src/styles/shared.styles";
-import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
-import singleNoteStyles from "../styles/singleNote.styles";
+import NoteSummary from "../../ideas/components/NoteSummary";
 import TagsDropdown from "../../sortingAndFiltering/components/TagsDropdown";
+import singleNoteStyles from "../styles/singleNote.styles";
+import NoteStats from "./NoteStats";
 
 interface NoteInfoProps {
-  createdAt?: string;
-  updatedAt?: string;
-  numVisits?: number;
-  numWords: number;
   selectedTags: string[];
   onChangeSelectedTags: (value: string[]) => void;
 }
 
 export default function NoteInfo({
-  createdAt,
-  updatedAt,
-  numVisits,
-  numWords,
   selectedTags,
   onChangeSelectedTags,
 }: NoteInfoProps) {
@@ -67,56 +60,15 @@ export default function NoteInfo({
               },
             ]}
           />
-          {infoSection === "general" && (
-            <>
-              {createdAt && (
-                <View style={singleNoteStyles.noteStat}>
-                  <MaterialIcons
-                    name="calendar-month"
-                    size={22}
-                    color={COLORS.secondary}
-                  />
-                  <Text style={sharedStyles.mediumText}>
-                    Created at {formatDate(createdAt)}
-                  </Text>
-                </View>
-              )}
-              {updatedAt && (
-                <View style={singleNoteStyles.noteStat}>
-                  <MaterialIcons
-                    name="update"
-                    size={22}
-                    color={COLORS.secondary}
-                  />
-                  <Text style={sharedStyles.mediumText}>
-                    Updated at {formatDate(updatedAt)}
-                  </Text>
-                </View>
-              )}
-              {numVisits !== undefined && (
-                <View style={singleNoteStyles.noteStat}>
-                  <MaterialIcons
-                    name="file-open"
-                    size={22}
-                    color={COLORS.secondary}
-                  />
-                  <Text style={sharedStyles.mediumText}>
-                    Visited {numVisits + 1} times
-                  </Text>
-                </View>
-              )}
-              <View style={singleNoteStyles.noteStat}>
-                <MaterialIcons name="abc" size={22} color={COLORS.secondary} />
-                <Text style={sharedStyles.mediumText}>{numWords} words</Text>
-              </View>
-            </>
-          )}
+
+          {infoSection === "general" && <NoteStats />}
           {infoSection === "tags" && (
             <TagsDropdown
               selectedTags={selectedTags}
               onChangeSelectedTags={onChangeSelectedTags}
             />
           )}
+          {infoSection === "ai" && <NoteSummary />}
         </View>
       )}
     </>

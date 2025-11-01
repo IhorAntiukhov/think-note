@@ -3,7 +3,7 @@ import supabase from "@/src/api/supabase";
 export async function deleteUserData(userId: string) {
   const { error: storageError } = await supabase.storage
     .from("Avatars")
-    .remove([userId]);
+    .remove([`/${userId}`, `/${userId}/avatar.jpeg`]);
 
   if (storageError) return storageError;
 

@@ -1,6 +1,7 @@
 import { AuthError, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import supabase from "../../../api/supabase";
+import DEFAULT_PROMPT from "../constants/defaultPrompt";
 import { FormDataKey } from "../types/forms";
 
 export async function signInWithEmailAndPassword(
@@ -26,6 +27,7 @@ export async function signUp(
     options: {
       data: {
         username,
+        default_prompt: DEFAULT_PROMPT,
       },
       emailRedirectTo: Linking.createURL("/(auth)/login"),
     },
@@ -48,43 +50,66 @@ export async function resetPassword(email: string) {
   return { data, error };
 }
 
-export async function updateUser(
-  username?: string,
-  email?: string,
-  password?: string,
-  avatar_path?: string,
-) {
+interface UpdateUserParams {
+  username?: string;
+  email?: string;
+  password?: string;
+  avatarPath?: string;
+  defaultPrompt?: string;
+}
+
+export async function updateUser({
+  username,
+  email,
+  password,
+  avatarPath,
+  defaultPrompt,
+}: UpdateUserParams) {
   const { data, error } = await supabase.auth.updateUser({
     email,
     password,
     data: {
       username,
-      avatar_path,
+      avatar_path: avatarPath,
+      default_prompt: defaultPrompt,
     },
   });
 
   return { data, error };
 }
 
-export async function updateUserWithMessage(
-  paramName: FormDataKey,
-  showInfoAlert: (title: string, content: string) => void,
-  username?: string,
-  email?: string,
-  password?: string,
-) {
+interface UpdateUserWithMessageParams extends UpdateUserParams {
+  paramName: FormDataKey;
+  showInfoDialog: (title: string, content: string) => void;
+}
+
+export async function updateUserWithMessage({
+  paramName,
+  showInfoDialog,
+  username,
+  email,
+  password,
+  avatarPath,
+  defaultPrompt,
+}: UpdateUserWithMessageParams) {
   try {
-    const { error } = await updateUser(username, email, password);
+    const { error } = await updateUser({
+      username,
+      email,
+      password,
+      avatarPath,
+      defaultPrompt,
+    });
 
     if (error) throw error;
 
     const alertMessage = password
       ? "Password updated successfully"
-      : `${paramName.charAt(0).toUpperCase()}${paramName.substring(1)} updated to ${username || email || password}`;
+      : `${defaultPrompt ? "Default prompt" : paramName.charAt(0).toUpperCase()}${paramName.substring(1)} updated to ${username || email || password || defaultPrompt}`;
 
-    showInfoAlert("User update succeded", alertMessage);
+    showInfoDialog("User update succeded", alertMessage);
   } catch (error) {
-    showInfoAlert("User update failed", (error as AuthError).message);
+    showInfoDialog("User update failed", (error as AuthError)?.message);
   }
 }
 

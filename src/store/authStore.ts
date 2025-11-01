@@ -3,16 +3,16 @@ import { create } from "zustand";
 
 interface AuthStore {
   session: Session | null | undefined;
-  avatarUrl: string | undefined;
+  avatarUrl: string | null;
   setSession: (session: Session | null) => void;
-  setAvatarUrl: (avatarUrl: string) => void;
+  setAvatarUrl: (avatarUrl: string | null) => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
   session: undefined,
-  avatarUrl: undefined,
-  setSession: (session: Session | null) => set(() => ({ session })),
-  setAvatarUrl: (avatarUrl: string) => set(() => ({ avatarUrl })),
+  avatarUrl: null,
+  setSession: (session) => set(() => ({ session })),
+  setAvatarUrl: (avatarUrl) => set(() => ({ avatarUrl })),
 }));
 
 export default useAuthStore;

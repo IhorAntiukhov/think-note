@@ -51,7 +51,7 @@ export async function getTopFolders(
 export async function getSingleNote(id: number) {
   const { data, error } = await supabase
     .from("notes")
-    .select("*, tags_notes ( tag_id )")
+    .select("*, tags_notes ( tag_id ), ideas ( content, folder_id )")
     .eq("id", id)
     .single();
 
@@ -160,14 +160,14 @@ export async function deleteNote(id: number) {
 }
 
 export async function changeParentFolder(
-  rowid: number,
-  currentdepth: number,
-  newfolderid?: number,
+  id: number,
+  currentDepth: number,
+  newFolderId?: number,
 ) {
   const { error } = await supabase.rpc("move_item", {
-    currentdepth,
-    newfolderid,
-    rowid,
+    rowid: id,
+    currentdepth: currentDepth,
+    newfolderid: newFolderId,
   });
 
   return error;

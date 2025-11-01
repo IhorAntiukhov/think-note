@@ -1,12 +1,11 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
-import useAvailableTagsStore from "@/src/store/availableTagsStore";
 import useDialogStore from "@/src/store/dialogStore";
 import sharedStyles from "@/src/styles/shared.styles";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import {
   ActivityIndicator,
@@ -17,7 +16,6 @@ import {
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AvatarWithUserName from "../../avatar/components/AvatarWithUserName";
-import { getAvailableTags } from "../../sortingAndFiltering/api/tagsRepo";
 import SortingAndFiltering from "../../sortingAndFiltering/components/SortingAndFiltering";
 import SORTING_OPTIONS from "../../sortingAndFiltering/constants/sortingOptions";
 import {
@@ -68,34 +66,7 @@ export default function TreeList() {
   const { top } = useSafeAreaInsets();
 
   const { user } = useAuthStore().session!;
-  const { setAvailableTags } = useAvailableTagsStore();
   const { showInfoDialog } = useDialogStore();
-
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const { data, error } = await getAvailableTags(user.id);
-
-        if (error) throw error;
-
-        if (data)
-          setAvailableTags(
-            data.map(({ id, label, color }) => ({
-              value: id.toString(),
-              label,
-              color,
-            })),
-          );
-      } catch (error) {
-        showInfoDialog(
-          "Failed to fetch tags",
-          (error as PostgrestError).message,
-        );
-      }
-    };
-
-    fetchTags();
-  }, [user.id, setAvailableTags, showInfoDialog]);
 
   const fetchData = useCallback(async () => {
     try {

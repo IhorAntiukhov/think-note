@@ -1,13 +1,14 @@
 import useAuthStore from "@/src/store/authStore";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
-import { createContext, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { ActivityIndicator, Card } from "react-native-paper";
 import Sorting from "../../sortingAndFiltering/components/Sorting";
 import SORTING_OPTIONS from "../../sortingAndFiltering/constants/sortingOptions";
 import { NoteData } from "../api/noteListsStore";
 import LIST_NAMES from "../constants/listNames";
+import NotesContext from "../context/notesContext";
 import homeStyles from "../styles/home.styles";
 import ListName from "../types/listName";
 import getFetchFunction from "../utils/getFetchFunction";
@@ -17,8 +18,6 @@ import Note from "./Note";
 interface NotesListProps {
   listName: ListName;
 }
-
-export const NotesContext = createContext<string>(SORTING_OPTIONS[0].value);
 
 export default function NotesList({ listName }: NotesListProps) {
   const { user } = useAuthStore().session!;

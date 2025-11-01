@@ -6,6 +6,8 @@ import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import supabase from "../api/supabase";
+import useAvailableTags from "../hooks/useAvailableTags";
+import useIdeaCategories from "../hooks/useIdeaCategories";
 import useAuthStore from "../store/authStore";
 
 SplashScreen.preventAutoHideAsync();
@@ -38,6 +40,9 @@ export default function AuthLayout() {
       data.subscription.unsubscribe();
     };
   }, [router, setSession]);
+
+  useAvailableTags(session);
+  useIdeaCategories(session);
 
   if (session === undefined) return null;
 

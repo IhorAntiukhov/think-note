@@ -11,8 +11,8 @@ export interface PasswordFormData {
   confirmPassword: string;
 }
 
-export interface IdeaWordsNumFormData {
-  ideaWordsNum: number;
+export interface DefaultPromptFormData {
+  defaultPrompt: string;
 }
 
 export interface SignInFormData {
@@ -31,4 +31,4 @@ export type FormDataKey =
   | keyof UsernameFormData
   | keyof EmailFormData
   | keyof PasswordFormData
-  | keyof IdeaWordsNumFormData;
+  | keyof DefaultPromptFormData;

@@ -5,7 +5,7 @@ import useOpenNewNote from "../../notes/hooks/useOpenNewNote";
 import homeStyles from "../styles/home.styles";
 
 export default function NewNote() {
-  const openNoteCreationPage = useOpenNewNote(1);
+  const openNoteCreationPage = useOpenNewNote(0);
 
   return (
     <TouchableOpacity

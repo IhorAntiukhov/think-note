@@ -8,6 +8,7 @@ type RowWithoutContent = Omit<
   | "content"
   | "num_words"
   | "num_visits"
+  | "ideas"
 >;
 
 export interface FolderRow extends RowWithoutContent {

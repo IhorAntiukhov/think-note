@@ -1,12 +1,14 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
 import useDialogStore from "@/src/store/dialogStore";
+import useIdeaCategoriesStore from "@/src/store/ideaCategoriesStore";
 import sharedStyles from "@/src/styles/shared.styles";
 import debounce from "@/src/utils/debounce";
 import {
   EditorBridge,
   RichText,
   Toolbar,
+  useBridgeState,
   useEditorBridge,
 } from "@10play/tentap-editor";
 import { EventArg, NavigationAction } from "@react-navigation/native";
@@ -25,6 +27,7 @@ import {
   updateNote,
 } from "../api/notesRepo";
 import NoteInfo from "../components/NoteInfo";
+import NoteInfoContext from "../context/noteInfoContext";
 import singleNoteStyles from "../styles/singleNote.styles";
 
 const countWords = async (editor: EditorBridge) => {
@@ -69,12 +72,15 @@ export default function SingleNote({
   const [isNoteMarked, setIsNoteMarked] = useState(isMarked || false);
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [aiResponseContent, setAiResponseContent] = useState("");
+  const [aiResponseCategory, setAiResponseCategory] = useState("");
 
   const isInitialDataSet = useRef(false);
   const disableSaveCheck = useRef(false);
 
   const { user } = useAuthStore().session!;
   const { showInfoDialog, showConfirmDialog } = useDialogStore();
+  const { categories } = useIdeaCategoriesStore();
 
   const editor = useEditorBridge({
     autofocus: true,
@@ -85,6 +91,7 @@ export default function SingleNote({
       setWordCount(numWords);
     }, 50),
   });
+  const editorState = useBridgeState(editor);
 
   useEffect(() => {
     const loadNoteData = async () => {
@@ -94,6 +101,16 @@ export default function SingleNote({
         setSelectedTags(
           noteData.tags_notes.map((tagNote) => tagNote.tag_id.toString()),
         );
+
+        if (noteData.ideas.length) {
+          setAiResponseContent(noteData.ideas[0].content);
+          setAiResponseCategory(
+            categories.find(
+              (category) => category.id === noteData.ideas[0].folder_id,
+            )?.content || "",
+          );
+        }
+
         editor.setContent(noteData.content || "");
 
         await incrementNoteVisits(noteData.id, noteData.num_visits || 0);
@@ -103,7 +120,7 @@ export default function SingleNote({
     };
 
     loadNoteData();
-  }, [editor, noteName, noteData]);
+  }, [editor, noteName, noteData, categories]);
 
   useEffect(() => {
     const callback = async (
@@ -142,7 +159,7 @@ export default function SingleNote({
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      setHideNoteStats(true);
+      if (editorState.isFocused) setHideNoteStats(true);
     });
 
     const hideSubscription = Keyboard.addListener(
@@ -156,7 +173,7 @@ export default function SingleNote({
       showSubscription.remove();
       hideSubscription.remove();
     };
-  }, [editor]);
+  }, [editor, editorState.isFocused]);
 
   const onMarkNote = useCallback(async () => {
     if (!noteData) return;
@@ -213,7 +230,7 @@ export default function SingleNote({
         rawText,
         numWords,
         selectedTags.map((tagId) => +tagId),
-        folderId === undefined ? +(folderId as string) : undefined,
+        folderId !== undefined ? +(folderId as string) : undefined,
       );
 
       if (error) throw error;
@@ -301,20 +318,29 @@ export default function SingleNote({
 
         <Divider style={sharedStyles.divider} />
 
-        {!hideNoteStats && (
-          <>
+        <View style={{ display: hideNoteStats ? "none" : "contents" }}>
+          <NoteInfoContext
+            value={{
+              noteId: noteData?.id,
+              createdAt: noteData?.created_at,
+              updatedAt: noteData?.updated_at,
+              numVisits: noteData?.num_visits,
+              numWords: wordCount,
+              getNoteContent: editor.getText(),
+              aiResponseContent,
+              aiResponseCategory,
+              setAiResponseContent,
+              setAiResponseCategory,
+            }}
+          >
             <NoteInfo
-              createdAt={noteData?.created_at}
-              updatedAt={noteData?.updated_at}
-              numVisits={noteData?.num_visits}
-              numWords={wordCount}
               selectedTags={selectedTags}
               onChangeSelectedTags={setSelectedTags}
             />
+          </NoteInfoContext>
 
-            <Divider style={sharedStyles.divider} />
-          </>
-        )}
+          <Divider style={sharedStyles.divider} />
+        </View>
 
         <RichText
           editor={editor}

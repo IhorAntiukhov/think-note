@@ -40,12 +40,14 @@ export default function ModalDialog() {
 
     hideDialog();
 
-    if (dialogType !== DialogType.prompt) return;
-
-    const oldValue = value;
-    setValue("");
-    setDefaultValueFlag.current = false;
-    onConfirm?.(oldValue);
+    if (dialogType === DialogType.prompt) {
+      const oldValue = value;
+      setValue("");
+      setDefaultValueFlag.current = false;
+      onConfirm?.(oldValue);
+    } else if (dialogType === DialogType.confirm) {
+      onConfirm?.("");
+    }
   };
 
   const onHide = () => {

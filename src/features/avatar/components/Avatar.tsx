@@ -10,6 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import { getFromStorage } from "../api/storageRepo";
 import avatarStyles from "../styles/avatar.styles";
 
 interface AvatarProps {
@@ -28,11 +29,10 @@ export default function Avatar({ minimized = false }: AvatarProps) {
 
   const downloadFromStorage = useCallback(
     async (avatarPath: string) => {
-      const { data, error } = await supabase.storage
-        .from("Avatars")
-        .download(avatarPath);
+      const { data, error } = await getFromStorage(avatarPath);
 
-      if (!data || error) throw error;
+      if (error) throw error;
+      if (!data) return;
 
       const fileReader = new FileReader();
       fileReader.readAsDataURL(data);
@@ -55,13 +55,18 @@ export default function Avatar({ minimized = false }: AvatarProps) {
             MaterialIcons: require("@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf"),
           });
         }
+      } catch (error) {
+        showInfoDialog(
+          "Failed to download avatar",
+          (error as PostgrestError).message.substring(0, 500),
+        );
       } finally {
         setIsAvatarLoading(false);
       }
     }
 
     loadAvatar();
-  }, [user?.user_metadata.avatar_path, downloadFromStorage]);
+  }, [user?.user_metadata.avatar_path, downloadFromStorage, showInfoDialog]);
 
   const uploadAvatar = async () => {
     try {
@@ -93,16 +98,13 @@ export default function Avatar({ minimized = false }: AvatarProps) {
 
       if (error) throw error;
 
-      const { error: updateUserError } = await updateUser(
-        undefined,
-        undefined,
-        undefined,
-        data.path,
-      );
+      const { error: updateUserError } = await updateUser({
+        avatarPath: data.path,
+      });
 
       if (updateUserError) throw updateUserError;
 
-      downloadFromStorage(data.path);
+      await downloadFromStorage(data.path);
     } catch (error) {
       showInfoDialog("Avatar upload failed", (error as PostgrestError).message);
     } finally {
@@ -112,7 +114,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
 
   const avatarImage = (
     <Image
-      source={{ uri: avatarUrl }}
+      source={{ uri: avatarUrl ?? undefined }}
       style={
         minimized ? avatarStyles.avatarImageMinimized : avatarStyles.avatarImage
       }

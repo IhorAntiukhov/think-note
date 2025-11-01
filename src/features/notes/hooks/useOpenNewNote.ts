@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 export default function useOpenNewNote(
   depth: number,
-  folderId?: number,
+  folderId: number | null,
   setIsMenuOpened?: (value: boolean) => void,
 ) {
   const router = useRouter();

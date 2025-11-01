@@ -8,8 +8,8 @@ import {
   View,
 } from "react-native";
 import treeListStyles from "../styles/treeList.styles";
-import OnCreateFolder from "../types/onCreateFolder";
 import FolderInputState from "../types/folderInputState";
+import OnCreateFolder from "../types/onCreateFolder";
 
 interface FolderNameInputProps {
   nested: boolean;
