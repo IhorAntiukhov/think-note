@@ -1,17 +1,29 @@
-import useAuthStore from "@/src/store/authStore";
+import { useState } from "react";
 import { View } from "react-native";
 import SearchWrapper from "../../search/components/SearchWrapper";
-import TreeList from "../components/TreeList";
+import TreeList from "../../treeList/components/TreeList";
+import { NoteFolderRow } from "../../treeList/types/noteRow";
+import filterAndSortItems from "../../treeList/utils/filterAndSortItems";
 import allNotesStyles from "../styles/allNotes.styles";
 
 export default function AllNotes() {
-  const { session } = useAuthStore();
-  if (!session?.user) return null;
+  const [data, setData] = useState<NoteFolderRow[]>([]);
+  const [showOnlyMarked, setShowOnlyMarked] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   return (
     <View style={allNotesStyles.container}>
-      <SearchWrapper>
-        <TreeList />
+      <SearchWrapper type="notes">
+        <TreeList
+          type="notes"
+          data={data}
+          setData={setData}
+          filterOrSortData={filterAndSortItems}
+          showOnlyMarked={showOnlyMarked}
+          setShowOnlyMarked={setShowOnlyMarked}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+        />
       </SearchWrapper>
     </View>
   );

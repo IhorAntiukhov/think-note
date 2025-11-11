@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import AvatarWithUserName from "../../avatar/components/AvatarWithUserName";
 import SearchWrapper from "../../search/components/SearchWrapper";
-import NotesListHeader from "../components/NotesList";
+import NotesList from "../components/NotesList";
 import LIST_NAMES from "../constants/listNames";
 import homeStyles from "../styles/home.styles";
 
@@ -14,10 +14,10 @@ export default function Home() {
         </View>
 
         <View style={homeStyles.listsContainer}>
-          <NotesListHeader listName={LIST_NAMES.UNCATEGORIZED} />
-          <NotesListHeader listName={LIST_NAMES.MARKED} />
-          <NotesListHeader listName={LIST_NAMES.RECENT} />
-          <NotesListHeader listName={LIST_NAMES.MOST_VISITED} />
+          <NotesList listName={LIST_NAMES.UNCATEGORIZED} />
+          <NotesList listName={LIST_NAMES.MARKED} />
+          <NotesList listName={LIST_NAMES.RECENT} />
+          <NotesList listName={LIST_NAMES.MOST_VISITED} />
         </View>
       </SearchWrapper>
     </View>

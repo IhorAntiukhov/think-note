@@ -51,7 +51,7 @@ export async function getTopFolders(
 export async function getSingleNote(id: number) {
   const { data, error } = await supabase
     .from("notes")
-    .select("*, tags_notes ( tag_id ), ideas ( content, folder_id )")
+    .select("*, tags_notes ( tag_id ), ideas ( id, content, folder_id )")
     .eq("id", id)
     .single();
 
@@ -77,7 +77,7 @@ export async function insertFolder(
         depth,
       },
     ])
-    .select()
+    .select("id, name, marked, folder_id, depth, type, tags_notes ( tag_id )")
     .single();
 
   return { data, error };

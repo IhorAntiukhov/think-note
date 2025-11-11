@@ -1,15 +1,10 @@
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
 
-export default function useOpenNewNote(
-  depth: number,
-  folderId: number | null,
-  setIsMenuOpened?: (value: boolean) => void,
-) {
+export default function useOpenNewNote(depth: number, folderId: number | null) {
   const router = useRouter();
 
   return useCallback(() => {
-    setIsMenuOpened?.(false);
     router.push({
       pathname: "/(notes)/new-note",
       params: {
@@ -17,5 +12,5 @@ export default function useOpenNewNote(
         depth,
       },
     });
-  }, [router, folderId, depth, setIsMenuOpened]);
+  }, [router, folderId, depth]);
 }

@@ -148,7 +148,7 @@ export default function Avatar({ minimized = false }: AvatarProps) {
             size={size}
             color={minimized ? "black" : "white"}
             onPress={minimized ? undefined : uploadAvatar}
-            style={{ marginBottom: 10 }}
+            style={{ marginBottom: 0 }}
           />
         )
       )}

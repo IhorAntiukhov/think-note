@@ -7,13 +7,13 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Text, View } from "react-native";
-import { getUserStats } from "../api/userStatsRepo";
+import { getIdeaCount, getNoteFolderCount } from "../api/userStatsRepo";
 import profileStyles from "../styles/profile.styles";
 
 export default function UserStats() {
   const [numNotes, setNumNotes] = useState(0);
   const [numFolders, setNumFolders] = useState(0);
-  const [numIdeas] = useState(0);
+  const [numIdeas, setNumIdeas] = useState(0);
 
   const { session } = useAuthStore();
   const { showInfoDialog } = useDialogStore();
@@ -23,15 +23,26 @@ export default function UserStats() {
     useCallback(() => {
       const fetchStats = async () => {
         try {
-          const { data, error } = await getUserStats(user.id);
+          const { data: noteFolderData, error: noteFolderError } =
+            await getNoteFolderCount(user.id);
 
-          if (error) throw error;
-          if (!data) return;
+          if (noteFolderError) throw noteFolderError;
+          if (!noteFolderData) return;
 
-          setNumNotes(data.find((value) => value.type === "note")?.count || 0);
-          setNumFolders(
-            data.find((value) => value.type === "folder")?.count || 0,
+          const { data: ideaData, error: ideaError } = await getIdeaCount(
+            user.id,
           );
+
+          if (ideaError) throw ideaError;
+          if (!ideaData) return;
+
+          setNumNotes(
+            noteFolderData.find((value) => value.type === "note")?.count || 0,
+          );
+          setNumFolders(
+            noteFolderData.find((value) => value.type === "folder")?.count || 0,
+          );
+          setNumIdeas(ideaData[0].count);
         } catch (error) {
           showInfoDialog(
             "User stats fetch failed",

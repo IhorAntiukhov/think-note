@@ -3,25 +3,34 @@ import useDialogStore from "@/src/store/dialogStore";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import NoteItem from "../../notes/components/NoteItem";
-import treeListStyles from "../../notes/styles/treeList.styles";
-import { SearchNoteData, searchNotes } from "../api/searchRepo";
+import IdeaItem from "../../treeList/components/IdeaItem";
+import NoteItem from "../../treeList/components/NoteItem";
+import treeListStyles from "../../treeList/styles/treeList.styles";
+import {
+  SearchIdeaData,
+  searchIdeas,
+  SearchNoteData,
+  searchNotes,
+} from "../api/searchRepo";
 
 interface SearchResultsListProp {
+  type: "notes" | "ideas";
   searchQuery: string;
 }
 
 export default function SearchResultsList({
+  type,
   searchQuery,
 }: SearchResultsListProp) {
   const { user } = useAuthStore().session!;
+  const [data, setData] = useState<SearchNoteData | SearchIdeaData>(null);
   const { showInfoDialog } = useDialogStore();
-
-  const [data, setData] = useState<SearchNoteData>(null);
 
   const fetchData = useCallback(async () => {
     try {
-      const { data, error } = await searchNotes(searchQuery, user.id);
+      const { data, error } = await (
+        type === "notes" ? searchNotes : searchIdeas
+      )(searchQuery, user.id);
 
       if (error) throw error;
 
@@ -29,7 +38,7 @@ export default function SearchResultsList({
     } catch (error) {
       showInfoDialog("Fetch failed", (error as PostgrestError).message);
     }
-  }, [searchQuery, user.id, showInfoDialog]);
+  }, [type, searchQuery, user.id, showInfoDialog, setData]);
 
   useEffect(() => {
     fetchData();
@@ -38,15 +47,27 @@ export default function SearchResultsList({
   return (
     <View style={treeListStyles.listContainer}>
       {data && data.length ? (
-        data.map((item, index) => (
-          <NoteItem
-            item={{ ...item, type: "note", folder_id: null, depth: 1 }}
-            key={item.id}
-            index={index}
-            selectedIndex={null}
-            inSearchResults
-          />
-        ))
+        type === "notes" ? (
+          (data as NonNullable<SearchNoteData>).map((item, index) => (
+            <NoteItem
+              item={{ ...item, type: "note", folder_id: null, depth: 1 }}
+              key={item.id}
+              index={index}
+              selectedIndex={null}
+              inSearchResults
+            />
+          ))
+        ) : (
+          (data as NonNullable<SearchIdeaData>).map((item, index) => (
+            <IdeaItem
+              item={{ ...item, type: "note" }}
+              key={item.id}
+              index={index}
+              selectedIndex={null}
+              inSearchResults
+            />
+          ))
+        )
       ) : (
         <Text style={treeListStyles.noDataText}>No notes found</Text>
       )}

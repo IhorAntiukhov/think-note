@@ -72,6 +72,7 @@ export default function SingleNote({
   const [isNoteMarked, setIsNoteMarked] = useState(isMarked || false);
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [aiResponseId, setAiResponseId] = useState(0);
   const [aiResponseContent, setAiResponseContent] = useState("");
   const [aiResponseCategory, setAiResponseCategory] = useState("");
 
@@ -103,6 +104,7 @@ export default function SingleNote({
         );
 
         if (noteData.ideas.length) {
+          setAiResponseId(noteData.ideas[0].id);
           setAiResponseContent(noteData.ideas[0].content);
           setAiResponseCategory(
             categories.find(
@@ -111,7 +113,7 @@ export default function SingleNote({
           );
         }
 
-        editor.setContent(noteData.content || "");
+        editor.setContent(noteData.content);
 
         await incrementNoteVisits(noteData.id, noteData.num_visits || 0);
 
@@ -327,9 +329,11 @@ export default function SingleNote({
               numVisits: noteData?.num_visits,
               numWords: wordCount,
               getNoteContent: editor.getText(),
+              aiResponseId,
+              setAiResponseId,
               aiResponseContent,
-              aiResponseCategory,
               setAiResponseContent,
+              aiResponseCategory,
               setAiResponseCategory,
             }}
           >

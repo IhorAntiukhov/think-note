@@ -1,4 +1,4 @@
-import { NoteData } from "../api/notesRepo";
+import { NoteData } from "../../notes/api/notesRepo";
 
 type RowWithoutContent = Omit<
   NonNullable<NoteData>,
@@ -19,4 +19,4 @@ export interface NoteRow extends RowWithoutContent {
   type: "note";
 }
 
-export type TreeItemRow = FolderRow | NoteRow;
+export type NoteFolderRow = FolderRow | NoteRow;

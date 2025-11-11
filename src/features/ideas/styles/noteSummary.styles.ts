@@ -21,6 +21,7 @@ export default StyleSheet.create({
   saveAiResponseContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    gap: 5,
   },
   aiResponseCategoryText: {
     fontSize: 18,

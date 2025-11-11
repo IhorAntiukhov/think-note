@@ -3,8 +3,8 @@ import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { Card, Divider } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
-import NoteHeader from "../../notes/components/NoteHeader";
-import useOpenNote from "../../notes/hooks/useOpenNote";
+import NoteHeader from "../../treeList/components/NoteHeader";
+import useOpenNote from "../../treeList/hooks/useOpenNote";
 import { NoteData } from "../api/noteListsStore";
 import NoteFooter from "./NoteFooter";
 

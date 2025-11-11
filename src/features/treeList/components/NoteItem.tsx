@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import useOpenNote from "../hooks/useOpenNote";
-import { NoteRow } from "../types/rowTypes";
+import { NoteRow } from "../types/noteRow";
 import NoteHeader from "./NoteHeader";
 
 interface NoteItemProps {
@@ -38,7 +38,7 @@ export default function NoteItem({
         opacity: selectedIndex === index ? 0.5 : undefined,
       }}
       onPress={openNote}
-      onLongPress={inSearchResults ? onSelectNote : undefined}
+      onLongPress={inSearchResults ? undefined : onSelectNote}
     >
       <NoteHeader item={item} />
     </TouchableOpacity>

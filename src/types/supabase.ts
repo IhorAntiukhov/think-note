@@ -271,7 +271,7 @@ export type Database = {
           note_id: number;
           user_id: string;
         };
-        Returns: undefined;
+        Returns: number;
       };
       update_note: {
         Args: {

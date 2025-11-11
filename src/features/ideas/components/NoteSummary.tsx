@@ -12,7 +12,7 @@ import { Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import NoteInfoContext from "../../notes/context/noteInfoContext";
 import { generateIdea } from "../api/geminiClient";
-import { saveIdea } from "../api/ideasRepo";
+import { deleteIdeaOrCategory, saveIdea } from "../api/ideasRepo";
 import noteSummaryStyles from "../styles/noteSummary.styles";
 import {
   NewContentFormData,
@@ -23,15 +23,17 @@ import DefaultPromptInput from "./DefaultPromptInput";
 export default function NoteSummary() {
   const {
     noteId,
+    aiResponseId,
+    setAiResponseId,
     aiResponseContent,
-    aiResponseCategory,
     setAiResponseContent,
+    aiResponseCategory,
     setAiResponseCategory,
     getNoteContent,
   } = use(NoteInfoContext);
 
   const { categories } = useIdeaCategoriesStore();
-  const { showInfoDialog } = useDialogStore();
+  const { showInfoDialog, showConfirmDialog } = useDialogStore();
   const { user } = useAuthStore().session!;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +68,7 @@ export default function NoteSummary() {
             (availableCategory) => availableCategory.content === category,
           )?.id;
 
-          const error = await saveIdea(
+          const { data, error } = await saveIdea(
             summaryOrIdeaContent,
             noteId!,
             user.id,
@@ -75,6 +77,7 @@ export default function NoteSummary() {
 
           if (error) throw error;
 
+          if (data) setAiResponseId?.(data);
           setAiResponseContent?.(summaryOrIdeaContent);
           setAiResponseCategory?.(category);
         }
@@ -95,12 +98,53 @@ export default function NoteSummary() {
       user.id,
       setAiResponseContent,
       setAiResponseCategory,
+      setAiResponseId,
     ],
   );
+
+  const onDeleteIdea = useCallback(async () => {
+    showConfirmDialog(
+      "Idea deletion",
+      "Are you sure you want to delete this idea?",
+      async () => {
+        try {
+          const error = await deleteIdeaOrCategory(aiResponseId);
+
+          if (error) throw error;
+
+          setAiResponseContent?.("");
+          setAiResponseCategory?.("");
+        } catch (error) {
+          showInfoDialog(
+            "Idea deletion failed",
+            (error as PostgrestError).message,
+          );
+        }
+      },
+    );
+  }, [
+    aiResponseId,
+    setAiResponseContent,
+    setAiResponseCategory,
+    showConfirmDialog,
+    showInfoDialog,
+  ]);
 
   const updateAiResponse = handleSubmit(
     useCallback(
       async ({ newContent }) => {
+        if (
+          newContent === aiResponseContent &&
+          (!newCategory ||
+            aiResponseCategory ===
+              categories.find(
+                (availableCategory) => availableCategory.id === +newCategory,
+              )?.content)
+        ) {
+          setIsEditAiResponse(false);
+          return;
+        }
+
         try {
           const folderId = newCategory
             ? +newCategory
@@ -129,6 +173,7 @@ export default function NoteSummary() {
       },
       [
         showInfoDialog,
+        aiResponseContent,
         aiResponseCategory,
         newCategory,
         noteId,
@@ -191,6 +236,9 @@ export default function NoteSummary() {
                 { flex: isEditAiResponse ? undefined : 1 },
               ]}
             >
+              {!isEditAiResponse && (
+                <MaterialIcons name="delete" size={28} onPress={onDeleteIdea} />
+              )}
               <MaterialIcons
                 name={isEditAiResponse ? "check" : "edit"}
                 size={28}

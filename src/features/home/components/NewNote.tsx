@@ -1,7 +1,7 @@
 import { COLORS } from "@/src/constants/theme";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Text, TouchableOpacity } from "react-native";
-import useOpenNewNote from "../../notes/hooks/useOpenNewNote";
+import useOpenNewNote from "../../treeList/hooks/useOpenNewNote";
 import homeStyles from "../styles/home.styles";
 
 export default function NewNote() {

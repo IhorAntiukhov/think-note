@@ -19,6 +19,11 @@ export default StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
+  ideaContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 5,
+  },
   text: {
     fontSize: 18,
     flexShrink: 1,
@@ -42,5 +47,24 @@ export default StyleSheet.create({
     borderColor: COLORS.primary,
     margin: 0,
     marginRight: 5,
+  },
+  mainDirectory: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    marginBottom: 10,
+  },
+  controlButtons: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+  },
+  controlButton: {
+    borderRadius: "50%",
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    margin: 0,
   },
 });

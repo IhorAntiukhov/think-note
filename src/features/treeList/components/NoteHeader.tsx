@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import TagsDropdownItem from "../../sortingAndFiltering/components/TagsDropdownItem";
 import treeListStyles from "../styles/treeList.styles";
-import { NoteRow } from "../types/rowTypes";
+import { NoteRow } from "../types/noteRow";
 
 interface NoteHeaderProps {
   item: NoteRow;

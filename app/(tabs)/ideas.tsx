@@ -1,6 +1,11 @@
-import TreeList from "@/src/features/notes/components/TreeList";
+import AllIdeas from "@/src/features/ideas/screens/AllIdeas";
+import ScreenScrollWrapper from "@/src/navigation/ScreenScrollWrapper";
 import React from "react";
 
 export default function IdeasPage() {
-  return <TreeList />;
+  return (
+    <ScreenScrollWrapper>
+      <AllIdeas />
+    </ScreenScrollWrapper>
+  );
 }

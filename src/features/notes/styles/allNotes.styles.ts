@@ -1,4 +1,3 @@
-import { COLORS } from "@/src/constants/theme";
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -10,24 +9,5 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
-  },
-  mainDirectory: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
-    marginBottom: 10,
-  },
-  treeListControlButtons: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 10,
-  },
-  treeListControlButton: {
-    borderRadius: "50%",
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    margin: 0,
   },
 });
