@@ -43,7 +43,6 @@ export default function useMoveItem() {
               : data[destinationFolderIndex].id,
           );
         } else if (destinationFolderIndex !== null) {
-          console.log(destinationFolderIndex);
           error = await changeIdeaCategory(
             data[selectedItemIndex].id,
             data[destinationFolderIndex].id,

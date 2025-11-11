@@ -114,7 +114,6 @@ export default function TreeList({
 
   useFocusEffect(
     useCallback(() => {
-      console.log("fetchData");
       fetchData();
     }, [fetchData]),
   );

@@ -61,8 +61,6 @@ export async function getIdeasInCategories(
       )
     : await query.eq("type", "folder");
 
-  console.log(data);
-
   return { data, error };
 }
 
