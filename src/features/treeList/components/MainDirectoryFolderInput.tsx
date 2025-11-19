@@ -4,10 +4,15 @@ import useCreateFolder from "../hooks/useCreateFolder";
 import FolderNameInput from "./FolderNameInput";
 
 export default function MainDirectoryFolderInput() {
-  const { newFolderDepth } = use(TreeListContext)!;
+  const { type, newFolderDepth } = use(TreeListContext)!;
   const createFolder = useCreateFolder();
 
   return newFolderDepth ? (
-    <FolderNameInput nested={false} index={0} onCreateFolder={createFolder} />
+    <FolderNameInput
+      type={type}
+      nested={false}
+      index={0}
+      onCreateFolder={createFolder}
+    />
   ) : null;
 }

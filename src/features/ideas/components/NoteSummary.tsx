@@ -153,11 +153,17 @@ export default function NoteSummary() {
                   availableCategory.content === aiResponseCategory,
               )?.id;
 
-          const error = await saveIdea(newContent, noteId!, user.id, folderId);
+          const { data, error } = await saveIdea(
+            newContent,
+            noteId!,
+            user.id,
+            folderId,
+          );
 
           if (error) throw error;
 
           setAiResponseContent?.(newContent);
+          setAiResponseId?.(data || 0);
           newCategory &&
             setAiResponseCategory?.(
               categories.find((category) => category.id === +newCategory)
@@ -181,6 +187,7 @@ export default function NoteSummary() {
         categories,
         setAiResponseCategory,
         setAiResponseContent,
+        setAiResponseId,
       ],
     ),
   );
@@ -193,6 +200,15 @@ export default function NoteSummary() {
       setIsEditAiResponse(true);
     }
   }, [isEditAiResponse, updateAiResponse, setValue, aiResponseContent]);
+
+  if (!noteId)
+    return (
+      <View style={noteSummaryStyles.container}>
+        <Text style={noteSummaryStyles.noDataText}>
+          Save a note to generate an idea from it.
+        </Text>
+      </View>
+    );
 
   return (
     <View style={noteSummaryStyles.container}>

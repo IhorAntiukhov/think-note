@@ -3,12 +3,17 @@ import { COLORS } from "../constants/theme";
 
 export default StyleSheet.create({
   container: {
+    maxWidth: 400,
     backgroundColor: COLORS.background,
+    cursor: "pointer",
   },
   multiselectContainer: {
+    width: "100%",
+    maxWidth: 400,
     display: "flex",
     flexDirection: "row",
     gap: 10,
+    cursor: "pointer",
   },
   dropdown: {
     height: 45,

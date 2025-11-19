@@ -14,10 +14,17 @@ export default StyleSheet.create({
     borderColor: "black",
     flexShrink: 1,
   },
+  toolbar: {
+    display: "flex",
+    marginHorizontal: -20,
+    paddingBottom: 10,
+    alignItems: "center",
+  },
   noteTitleInput: {
     fontSize: 24,
     fontWeight: "bold",
     paddingStart: 0,
+    borderBottomWidth: 0,
   },
   noteContentInput: {
     fontSize: 18,

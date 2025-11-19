@@ -44,7 +44,14 @@ export default function useFetchData({ value }: UseFetchDataProps) {
 
       if (data) {
         if (type === "notes") {
-          setData(filterOrSortData(data as NoteFolderRow[], selectedTags));
+          setData(
+            filterOrSortData(
+              (data as NoteFolderRow[]).filter(
+                (note) => !(note.depth === 1 && note.type === "note"),
+              ),
+              selectedTags,
+            ),
+          );
         } else {
           setData(filterOrSortData(data as IdeaCategoryRow[]));
         }

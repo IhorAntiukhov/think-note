@@ -64,7 +64,10 @@ export default function NotesList({ listName }: NotesListProps) {
         <View style={homeStyles.listHeader}>
           <View style={homeStyles.listNameHeader}>
             <Text style={homeStyles.listName}>{listName}</Text>
-            <Text style={homeStyles.noteCount}>{data?.length || 0} notes</Text>
+            <Text style={homeStyles.noteCount}>
+              {data ? (isUncategorized ? data.length - 1 : data.length) : 0}{" "}
+              notes
+            </Text>
           </View>
 
           {listName !== LIST_NAMES.MOST_VISITED && (
@@ -99,6 +102,7 @@ export default function NotesList({ listName }: NotesListProps) {
               }}
               contentContainerStyle={{
                 gap: 10,
+                paddingRight: 15,
               }}
             />
           </NotesContext>

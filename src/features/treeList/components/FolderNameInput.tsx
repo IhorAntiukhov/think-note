@@ -1,11 +1,13 @@
 import { COLORS } from "@/src/constants/theme";
+import { sharedStyles } from "@/src/styles/shared.styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useCallback } from "react";
-import { TextInput, TextInputEndEditingEvent, View } from "react-native";
+import { TextInput, TextInputSubmitEditingEvent, View } from "react-native";
 import treeListStyles from "../styles/treeList.styles";
 import OnCreateFolder from "../types/onCreateFolder";
 
 interface FolderNameInputProps {
+  type: "notes" | "ideas";
   nested: boolean;
   onCreateFolder: OnCreateFolder;
   index: number;
@@ -15,6 +17,7 @@ interface FolderNameInputProps {
 }
 
 export default function FolderNameInput({
+  type,
   nested,
   onCreateFolder,
   index,
@@ -23,7 +26,7 @@ export default function FolderNameInput({
   itemDepth,
 }: FolderNameInputProps) {
   const onEndEditing = useCallback(
-    (event: TextInputEndEditingEvent) => {
+    (event: TextInputSubmitEditingEvent) => {
       setIsFolderCreationStarted?.(false);
       onCreateFolder!(
         event.nativeEvent.text,
@@ -47,9 +50,9 @@ export default function FolderNameInput({
         }}
       />
       <TextInput
-        style={treeListStyles.input}
-        placeholder="Enter folder name"
-        onEndEditing={onEndEditing}
+        style={sharedStyles.input}
+        placeholder={`Enter ${type === "notes" ? "folder" : "category"} name`}
+        onSubmitEditing={onEndEditing}
         maxLength={20}
         autoFocus
       />

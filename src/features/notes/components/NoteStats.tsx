@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import sharedStyles from "@/src/styles/shared.styles";
+import { sharedStyles } from "@/src/styles/shared.styles";
 import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use } from "react";

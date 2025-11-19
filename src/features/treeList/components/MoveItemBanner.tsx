@@ -4,10 +4,12 @@ import { Portal, Surface } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface MoveItemBannerProps {
+  type: "notes" | "ideas";
   selectedItemIndex: number | null;
 }
 
 export default function MoveItemBanner({
+  type,
   selectedItemIndex,
 }: MoveItemBannerProps) {
   const { top } = useSafeAreaInsets();
@@ -24,7 +26,8 @@ export default function MoveItemBanner({
         }}
       >
         <Text style={{ fontSize: 18, textAlign: "center" }}>
-          Select the folder where you want to move the selected item
+          Select the {type === "notes" ? "folder" : "category"} where you want
+          to move the selected {type === "notes" ? "item" : "idea"}
         </Text>
       </Surface>
     </Portal>

@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import AuthLayout from "@/src/navigation/AuthLayout";
+import * as SplashScreen from "expo-splash-screen";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -14,6 +15,11 @@ const theme = {
     secondary: COLORS.secondary,
   },
 };
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function RootLayout() {
   return (

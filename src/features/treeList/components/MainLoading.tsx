@@ -6,7 +6,7 @@ import treeListStyles from "../styles/treeList.styles";
 import LoadingAllState from "../types/loadingAllState";
 
 export default function MainLoading() {
-  const { data, loadingAllState, newFolderDepth } = use(TreeListContext)!;
+  const { type, data, loadingAllState, newFolderDepth } = use(TreeListContext)!;
 
   return !data.length && !newFolderDepth ? (
     <View style={treeListStyles.noDataWrapper}>
@@ -14,7 +14,8 @@ export default function MainLoading() {
         <ActivityIndicator size={32} />
       ) : (
         <Text style={treeListStyles.noDataText}>
-          You do not have any folders or notes
+          You do not have any{" "}
+          {type === "notes" ? "folders or notes" : "categories or ideas"}
         </Text>
       )}
     </View>

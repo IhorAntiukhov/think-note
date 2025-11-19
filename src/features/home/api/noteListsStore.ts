@@ -32,6 +32,7 @@ export async function getMarkedNotes(
     .eq("user_id", userId)
     .eq("type", "note")
     .eq("marked", true)
+    .neq("depth", 1)
     .order(sortBy, { ascending });
 
   return { data, error };
@@ -47,6 +48,7 @@ export async function getRecentNotes(
     .select(SELECT_STATEMENT)
     .eq("user_id", userId)
     .eq("type", "note")
+    .neq("depth", 1)
     .limit(10)
     .order(sortBy, { ascending });
 
@@ -64,6 +66,7 @@ export async function getMostVisitedNotes(
     .eq("user_id", userId)
     .eq("type", "note")
     .limit(10)
+    .neq("depth", 1)
     .order(`num_visits`, { ascending: false })
     .order(sortBy, { ascending });
 

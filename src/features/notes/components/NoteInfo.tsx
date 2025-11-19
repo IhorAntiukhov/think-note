@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import sharedStyles from "@/src/styles/shared.styles";
+import { sharedStyles } from "@/src/styles/shared.styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -63,10 +63,18 @@ export default function NoteInfo({
 
           {infoSection === "general" && <NoteStats />}
           {infoSection === "tags" && (
-            <TagsDropdown
-              selectedTags={selectedTags}
-              onChangeSelectedTags={onChangeSelectedTags}
-            />
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <TagsDropdown
+                selectedTags={selectedTags}
+                onChangeSelectedTags={onChangeSelectedTags}
+              />
+            </View>
           )}
           {infoSection === "ai" && <NoteSummary />}
         </View>

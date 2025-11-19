@@ -6,7 +6,6 @@ export default StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    padding: 20,
   },
   listsContainer: {
     display: "flex",
@@ -52,6 +51,11 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+  },
+  noteHTML: {
+    height: 150,
+    overflow: "hidden",
+    width: 250,
   },
   noteFooter: {
     display: "flex",

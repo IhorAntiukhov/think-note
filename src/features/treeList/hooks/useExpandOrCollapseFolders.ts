@@ -57,7 +57,9 @@ export default function useExpandOrCollapseFolders() {
 
           if (type === "notes") {
             sortedData = filterOrSortData(
-              data as NoteFolderRow[],
+              (data as NoteFolderRow[]).filter(
+                (note) => !(note.depth === 1 && note.type === "note"),
+              ),
               selectedTags,
             );
 

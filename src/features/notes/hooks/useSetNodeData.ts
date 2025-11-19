@@ -13,12 +13,18 @@ export default function useSetNoteData(
   setAiResponseId: (value: number) => void,
   setAiResponseContent: (value: string) => void,
   setAiResponseCategory: (value: string) => void,
+  isInitialDataSet: React.RefObject<boolean>,
 ) {
   const { categories } = useIdeaCategoriesStore();
 
   useEffect(() => {
     const setNoteData = async () => {
-      if (noteData && noteName) {
+      if (
+        editor.getEditorState().isReady &&
+        noteData &&
+        noteName &&
+        !isInitialDataSet.current
+      ) {
         setWordCount(noteData.num_words || 0);
         setOldNoteContent(noteData.content);
         setSelectedTags(
@@ -36,6 +42,7 @@ export default function useSetNoteData(
         }
 
         editor.setContent(noteData.content);
+        isInitialDataSet.current = true;
 
         await incrementNoteVisits(noteData.id, noteData.num_visits || 0);
       }
@@ -53,5 +60,6 @@ export default function useSetNoteData(
     setAiResponseId,
     setAiResponseContent,
     setAiResponseCategory,
+    isInitialDataSet,
   ]);
 }

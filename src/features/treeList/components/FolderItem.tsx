@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { View } from "react-native";
 import { Menu } from "react-native-paper";
 import useOpenNewNote from "../hooks/useOpenNewNote";
+import CategoryItemRef from "../types/categoryItemRef";
 import { FolderRow } from "../types/noteRow";
 import OnCreateFolder from "../types/onCreateFolder";
 import CategoryItem from "./CaterogyItem";
@@ -37,8 +38,13 @@ export default function FolderItem({
   isLoading,
 }: FolderItemProps) {
   const [isFolderCreationStarted, setIsFolderCreationStarted] = useState(false);
+  const categoryItemRef = useRef<CategoryItemRef>(null);
 
-  const openNoteCreationPage = useOpenNewNote(item.depth, item.id);
+  const openNoteCreationPage = useOpenNewNote(
+    item.depth,
+    item.id,
+    categoryItemRef.current?.setIsMenuOpened,
+  );
 
   const leftOffset = (item.depth - 1) * 28;
 
@@ -57,6 +63,7 @@ export default function FolderItem({
   return (
     <View style={{ marginLeft: leftOffset }}>
       <CategoryItem
+        ref={categoryItemRef}
         type="folder"
         item={item}
         index={index}
@@ -86,6 +93,7 @@ export default function FolderItem({
       {isFolderCreationStarted && (
         <FolderNameInput
           nested
+          type="notes"
           setIsFolderCreationStarted={setIsFolderCreationStarted}
           onCreateFolder={onCreateFolder}
           index={index}

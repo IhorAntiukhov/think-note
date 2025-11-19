@@ -2,12 +2,14 @@ import { StyleSheet } from "react-native";
 import { COLORS } from "../constants/theme";
 
 export default StyleSheet.create({
+  dialogWindow: {
+    maxWidth: 600,
+    alignSelf: "center",
+  },
   textInput: {
     width: "100%",
-    fontSize: 18,
+    minWidth: 260,
     marginBottom: 15,
-    paddingStart: 0,
-    borderBottomWidth: 1,
     borderBottomColor: COLORS.primary,
   },
   button: {

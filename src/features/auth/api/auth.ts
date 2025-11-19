@@ -65,15 +65,20 @@ export async function updateUser({
   avatarPath,
   defaultPrompt,
 }: UpdateUserParams) {
-  const { data, error } = await supabase.auth.updateUser({
-    email,
-    password,
-    data: {
-      username,
-      avatar_path: avatarPath,
-      default_prompt: defaultPrompt,
+  const { data, error } = await supabase.auth.updateUser(
+    {
+      email,
+      password,
+      data: {
+        username,
+        avatar_path: avatarPath,
+        default_prompt: defaultPrompt,
+      },
     },
-  });
+    {
+      emailRedirectTo: Linking.createURL("/(tabs)/profile"),
+    },
+  );
 
   return { data, error };
 }
@@ -105,7 +110,7 @@ export async function updateUserWithMessage({
 
     const alertMessage = password
       ? "Password updated successfully"
-      : `${defaultPrompt ? "Default prompt" : paramName.charAt(0).toUpperCase()}${paramName.substring(1)} updated to ${username || email || password || defaultPrompt}`;
+      : `${defaultPrompt ? "Default prompt" : paramName.charAt(0).toUpperCase() + paramName.substring(1)} updated to "${username || email || password || defaultPrompt}"`;
 
     showInfoDialog("User update succeded", alertMessage);
   } catch (error) {

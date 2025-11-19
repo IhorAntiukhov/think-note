@@ -1,10 +1,10 @@
 import { COLORS } from "@/src/constants/theme";
-import sharedStyles from "@/src/styles/shared.styles";
+import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
 import debounce from "@/src/utils/debounce";
 import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
 import { useLocalSearchParams } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Platform, Text, TextInput, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { NoteData } from "../api/notesRepo";
 import NoteInfo from "../components/NoteInfo";
@@ -50,6 +50,7 @@ export default function SingleNote({
   const [aiResponseContent, setAiResponseContent] = useState("");
   const [aiResponseCategory, setAiResponseCategory] = useState("");
 
+  const isInitialDataSet = useRef(false);
   const disableSaveCheck = useRef(false);
 
   const editor = useEditorBridge({
@@ -60,6 +61,7 @@ export default function SingleNote({
 
       setWordCount(numWords);
     }, 50),
+    initialContent: noteData?.content,
   });
 
   useSetNoteData(
@@ -72,6 +74,7 @@ export default function SingleNote({
     setAiResponseId,
     setAiResponseContent,
     setAiResponseCategory,
+    isInitialDataSet,
   );
 
   useKeyboardListener(editor, setHideNoteStats);
@@ -93,12 +96,16 @@ export default function SingleNote({
         setOldNoteContent={setOldNoteContent}
       />
 
-      <View style={singleNoteStyles.container}>
+      <View
+        style={[singleNoteStyles.container, sharedStyles.container]}
+        dataSet={{ media: sharedStylesIds.container }}
+      >
         <TextInput
           placeholder="Type note name"
-          style={singleNoteStyles.noteTitleInput}
+          style={[sharedStyles.input, singleNoteStyles.noteTitleInput]}
           value={noteTitle}
           onChangeText={(text) => setNoteTitle(text)}
+          maxLength={40}
         />
 
         {hideNoteStats && <Text>{wordCount} words</Text>}
@@ -131,6 +138,12 @@ export default function SingleNote({
           <Divider style={sharedStyles.divider} />
         </View>
 
+        {Platform.OS === "web" && (
+          <View style={[singleNoteStyles.toolbar, { marginHorizontal: 0 }]}>
+            <Toolbar editor={editor} />
+          </View>
+        )}
+
         <RichText
           editor={editor}
           style={{
@@ -138,9 +151,11 @@ export default function SingleNote({
           }}
         />
 
-        <View style={{ marginHorizontal: -20, paddingBottom: 10 }}>
-          <Toolbar editor={editor} />
-        </View>
+        {Platform.OS !== "web" && (
+          <View style={singleNoteStyles.toolbar}>
+            <Toolbar editor={editor} />
+          </View>
+        )}
       </View>
     </>
   );

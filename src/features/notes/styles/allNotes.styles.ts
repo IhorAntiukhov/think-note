@@ -6,8 +6,5 @@ export default StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 40,
   },
 });

@@ -8,7 +8,7 @@ import {
 import { Dialog, Portal } from "react-native-paper";
 import useDialogStore from "../store/dialogStore";
 import dialogStyles from "../styles/dialog.styles";
-import sharedStyles from "../styles/shared.styles";
+import { sharedStyles } from "../styles/shared.styles";
 import DialogType from "../types/dialogType";
 
 export default function ModalDialog() {
@@ -57,8 +57,13 @@ export default function ModalDialog() {
 
   return (
     <Portal>
-      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-        <Dialog visible={true}>
+      <KeyboardAvoidingView
+        behavior="height"
+        style={{
+          flex: 1,
+        }}
+      >
+        <Dialog visible={true} style={dialogStyles.dialogWindow}>
           <Dialog.Title>{title}</Dialog.Title>
           <Dialog.Content>
             {dialogType === DialogType.prompt ? (
@@ -67,13 +72,13 @@ export default function ModalDialog() {
                 onChangeText={(text) => setValue(text)}
                 placeholder={placeholder}
                 maxLength={maxLength}
-                style={dialogStyles.textInput}
+                style={[sharedStyles.input, dialogStyles.textInput]}
               />
             ) : (
               <Text style={sharedStyles.mediumText}>{content}</Text>
             )}
           </Dialog.Content>
-          <Dialog.Actions>
+          <Dialog.Actions style={{ flexGrow: 0 }}>
             {(dialogType === DialogType.confirm ||
               dialogType === DialogType.prompt) && (
               <TouchableOpacity onPress={onHide}>

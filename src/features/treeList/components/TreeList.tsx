@@ -1,5 +1,5 @@
 import useAuthStore from "@/src/store/authStore";
-import sharedStyles from "@/src/styles/shared.styles";
+import { sharedStyles } from "@/src/styles/shared.styles";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
@@ -11,9 +11,9 @@ import SORTING_OPTIONS from "../../sortingAndFiltering/constants/sortingOptions"
 import TreeListContext from "../context/treeListContext";
 import useFetchData from "../hooks/useFetchData";
 import treeListStyles from "../styles/treeList.styles";
-import { IdeasListProps, NotesListProps } from "../types/treeListProps";
 import LoadingAllState from "../types/loadingAllState";
 import OpenedFolderType from "../types/openedFolderType";
+import { IdeasListProps, NotesListProps } from "../types/treeListProps";
 import ExpandCollapseButtons from "./ExpandCollapseButtons";
 import MainDirectoryFolderInput from "./MainDirectoryFolderInput";
 import MainLoading from "./MainLoading";
@@ -120,7 +120,7 @@ export default function TreeList({
 
   return (
     <TreeListContext value={treeListContextValue}>
-      <MoveItemBanner selectedItemIndex={selectedItemIndex} />
+      <MoveItemBanner type={type} selectedItemIndex={selectedItemIndex} />
 
       <ExpandCollapseButtons />
 
@@ -165,7 +165,7 @@ export default function TreeList({
       <Divider style={{ marginHorizontal: -20, marginBottom: 20 }} />
 
       <OutlineButton icon="folder-plus" onPress={() => setNewFolderDepth(1)}>
-        New folder
+        New {type === "notes" ? "folder" : "category"}
       </OutlineButton>
     </TreeListContext>
   );

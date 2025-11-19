@@ -26,25 +26,29 @@ export default function SortingAndFiltering({
   onChangeSelectedTags,
 }: SortingAndFilteringProps) {
   return (
-    <View>
-      <View style={sortingStyles.sortingAndFilteringContainer}>
+    <View style={sortingStyles.sortingAndFilteringContainer}>
+      <View style={sortingStyles.sortingAndMarkedContainer}>
         <ImageButton
           icon={isMarked ? "star" : "star-outline"}
           onPress={() => onChangeIsMarked(!isMarked)}
         />
 
-        <Sorting
-          sortBy={sortBy}
-          onChangeSortBy={onChangeSortBy}
-          isAscending={isAscending}
-          onChangeIsAscending={onChangeIsAscending}
-        />
+        <View style={{ flexGrow: 1 }}>
+          <Sorting
+            sortBy={sortBy}
+            onChangeSortBy={onChangeSortBy}
+            isAscending={isAscending}
+            onChangeIsAscending={onChangeIsAscending}
+          />
+        </View>
       </View>
 
-      <TagsDropdown
-        selectedTags={selectedTags}
-        onChangeSelectedTags={onChangeSelectedTags}
-      />
+      <View style={{ flexGrow: 1, maxWidth: 400 }}>
+        <TagsDropdown
+          selectedTags={selectedTags}
+          onChangeSelectedTags={onChangeSelectedTags}
+        />
+      </View>
     </View>
   );
 }

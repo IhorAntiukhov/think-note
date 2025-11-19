@@ -1,7 +1,7 @@
 import React from "react";
 import { IconButton, IconButtonProps } from "react-native-paper";
 import { COLORS } from "../constants/theme";
-import sharedStyles from "../styles/shared.styles";
+import { sharedStyles } from "../styles/shared.styles";
 
 export default function ImageButton({ ...rest }: IconButtonProps) {
   return (

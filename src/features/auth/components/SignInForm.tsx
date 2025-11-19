@@ -4,9 +4,8 @@ import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
 import { zodResolver } from "@hookform/resolvers/zod";
-import MaskedView from "@react-native-masked-view/masked-view";
+import useDialogStore from "@/src/store/dialogStore";
 import { AuthError } from "@supabase/supabase-js";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
@@ -14,7 +13,7 @@ import authStyles from "../styles/auth.styles";
 import { SignInFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import schema from "../zod/signIn";
-import useDialogStore from "@/src/store/dialogStore";
+import GradientTitle from "./GradientTitle";
 
 interface SignInFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -50,23 +49,7 @@ export default function SignInForm({ switchForm }: SignInFormProps) {
 
   return (
     <>
-      <View style={authStyles.titleWrapper}>
-        <Text style={authStyles.titleParts}>Welcome to </Text>
-        <MaskedView
-          maskElement={
-            <Text style={authStyles.thinkNoteTitle}>Think Note</Text>
-          }
-        >
-          <LinearGradient
-            colors={[COLORS.accent, COLORS.accentGradient]}
-            start={[0, 0]}
-            end={[1, 1]}
-          >
-            <Text style={authStyles.thinkNoteTitleTransparent}>Think Note</Text>
-          </LinearGradient>
-        </MaskedView>
-        <Text style={authStyles.titleParts}>!</Text>
-      </View>
+      <GradientTitle />
 
       <Input
         name="email"

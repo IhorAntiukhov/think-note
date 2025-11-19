@@ -68,7 +68,7 @@ export default function TopBar({
 
     showConfirmDialog(
       "Note deletion",
-      "Are you sure you want to delete this note?",
+      "Are you sure you want to delete this note? This action will also delete the idea generated from this note.",
       async () => {
         try {
           const error = await deleteNote(noteData.id);
@@ -179,12 +179,21 @@ export default function TopBar({
         title={type === "newNote" ? "New note" : "Edit note"}
         color="white"
       />
-      <Appbar.Action
-        onPress={onMarkNote}
-        icon={isNoteMarked ? "star" : "star-outline"}
-        iconColor="white"
-      />
-      <Appbar.Action onPress={onDeleteNote} icon="delete" iconColor="white" />
+
+      {type === "editNote" && (
+        <>
+          <Appbar.Action
+            onPress={onMarkNote}
+            icon={isNoteMarked ? "star" : "star-outline"}
+            iconColor="white"
+          />
+          <Appbar.Action
+            onPress={onDeleteNote}
+            icon="delete"
+            iconColor="white"
+          />
+        </>
+      )}
       <Appbar.Action onPress={onSaveNote} icon="check" iconColor="white" />
     </Appbar.Header>
   );

@@ -1,6 +1,7 @@
 import { signOut } from "@/src/features/auth/api/auth";
 import useAuthStore from "@/src/store/authStore";
 import useDialogStore from "@/src/store/dialogStore";
+import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { AuthError } from "@supabase/supabase-js";
 import { useCallback, useState } from "react";
@@ -33,7 +34,10 @@ export default function UserProfile() {
   if (!user) return null;
 
   return (
-    <View style={authStyles.container}>
+    <View
+      style={[authStyles.container, sharedStyles.container]}
+      dataSet={{ media: sharedStylesIds.container }}
+    >
       <Card style={{ position: "relative", maxWidth: 640 }}>
         <Card.Cover
           source={require("@/src/assets/images/profile-cover.jpg")}

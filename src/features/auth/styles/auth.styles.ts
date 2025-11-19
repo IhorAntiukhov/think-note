@@ -7,7 +7,6 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
-    padding: 20,
   },
   titleWrapper: {
     display: "flex",
@@ -28,12 +27,6 @@ export default StyleSheet.create({
   thinkNoteTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    backgroundColor: "transparent",
-  },
-  thinkNoteTitleTransparent: {
-    fontSize: 24,
-    fontWeight: "bold",
-    opacity: 0,
   },
   form: {
     display: "flex",

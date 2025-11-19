@@ -69,7 +69,7 @@ export default function SearchResultsList({
           ))
         )
       ) : (
-        <Text style={treeListStyles.noDataText}>No notes found</Text>
+        <Text style={treeListStyles.noDataText}>No {type} found</Text>
       )}
     </View>
   );

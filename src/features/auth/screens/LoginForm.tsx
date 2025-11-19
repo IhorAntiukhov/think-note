@@ -8,6 +8,7 @@ import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
 import authStyles from "../styles/auth.styles";
 import SelectedForm from "../types/selectedForm";
+import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
 
 export default function LoginForm() {
   const [selectedForm, setSelectedForm] = useState(SelectedForm.SignIn);
@@ -34,7 +35,10 @@ export default function LoginForm() {
   }, []);
 
   return (
-    <View style={authStyles.container}>
+    <View
+      style={[authStyles.container, sharedStyles.container]}
+      dataSet={{ media: sharedStylesIds.container }}
+    >
       <Card style={{ width: "100%", maxWidth: 640 }}>
         <Card.Content>
           {selectedForm === SelectedForm.SignIn && (

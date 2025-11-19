@@ -1,7 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Stack, useRouter } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,8 +8,6 @@ import supabase from "../api/supabase";
 import useAvailableTags from "../hooks/useAvailableTags";
 import useIdeaCategories from "../hooks/useIdeaCategories";
 import useAuthStore from "../store/authStore";
-
-SplashScreen.preventAutoHideAsync();
 
 export default function AuthLayout() {
   const { session, setSession } = useAuthStore();
@@ -25,8 +22,6 @@ export default function AuthLayout() {
       eventRef.current = event;
 
       if (event === "INITIAL_SESSION") {
-        SplashScreen.hide();
-
         if (session) router.replace("/(tabs)");
         else router.replace("/(auth)/login");
       } else if (event === "SIGNED_IN") {
