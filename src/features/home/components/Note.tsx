@@ -18,9 +18,9 @@ export default function Note({ item }: NoteProps) {
 
   return (
     <TouchableRipple onPress={openNote}>
-      <Card>
-        <Card.Content>
-          <View style={{ maxWidth: 250 }}>
+      <Card style={{ flex: 1 }} contentStyle={{ flex: 1 }}>
+        <Card.Content style={{ flex: 1 }}>
+          <View style={{ display: "flex", flex: 1, maxWidth: 250 }}>
             <NoteHeader
               item={{
                 id: item.id,
@@ -32,17 +32,24 @@ export default function Note({ item }: NoteProps) {
                 tags_notes: item.tags_notes,
               }}
             />
+
+            <Divider
+              style={[sharedStyles.divider, { marginHorizontal: -16 }]}
+            />
+
+            <View style={homeStyles.noteHTML}>
+              <RenderHTML source={{ html: item.content }} contentWidth={250} />
+            </View>
+
+            <Divider
+              style={[
+                sharedStyles.divider,
+                { marginHorizontal: -16, marginBottom: 10 },
+              ]}
+            />
+
+            <NoteFooter item={item} />
           </View>
-
-          <Divider style={[sharedStyles.divider, { marginHorizontal: -16 }]} />
-
-          <View style={homeStyles.noteHTML}>
-            <RenderHTML source={{ html: item.content }} contentWidth={250} />
-          </View>
-
-          <Divider style={[sharedStyles.divider, { marginBottom: 10 }]} />
-
-          <NoteFooter item={item} />
         </Card.Content>
       </Card>
     </TouchableRipple>

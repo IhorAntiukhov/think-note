@@ -14,6 +14,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   itemContainerWithGap: {
+    flex: 1,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",

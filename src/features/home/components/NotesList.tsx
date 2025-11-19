@@ -89,7 +89,11 @@ export default function NotesList({ listName }: NotesListProps) {
         </View>
 
         {data?.length ? (
-          <NotesContext value={sortBy}>
+          <NotesContext
+            value={{
+              sortBy,
+            }}
+          >
             <FlatList
               data={data!}
               renderItem={({ item }) =>
@@ -103,6 +107,7 @@ export default function NotesList({ listName }: NotesListProps) {
               contentContainerStyle={{
                 gap: 10,
                 paddingRight: 15,
+                justifyContent: "center",
               }}
             />
           </NotesContext>

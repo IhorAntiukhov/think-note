@@ -3,15 +3,15 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use } from "react";
 import { Text, View } from "react-native";
 import { NoteData } from "../api/noteListsStore";
-import homeStyles from "../styles/home.styles";
 import NotesContext from "../context/notesContext";
+import homeStyles from "../styles/home.styles";
 
 interface NoteProps {
   item: NoteData;
 }
 
 export default function NoteFooter({ item }: NoteProps) {
-  const sortBy = use(NotesContext);
+  const { sortBy } = use(NotesContext);
 
   return (
     <View style={homeStyles.noteFooter}>
