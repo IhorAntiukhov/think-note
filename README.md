@@ -1,6 +1,6 @@
 # Welcome to Think Note
 
-:notebook: This is a note-taking app built with Expo, powered by Supabase and Gemini. It provides a hierarchical folder structure, note-summarization by AI, a rich-text editor, filtering by tags, and much more!
+This is a note-taking app built with **Expo** and powered by **Supabase** and **Gemini**. It provides a hierarchical folder structure, note-summarization by AI, a rich-text editor, filtering by tags, and much more!
 
 # Overview
 
@@ -14,7 +14,7 @@
 
 # Main features
 
-- Notes
+- **Notes**
   - Rich text editor
   - Custom tags
   - Word counter
@@ -22,11 +22,11 @@
   - Sorting by created at, updated at, number of words, number of words, and number of visits.
   - Home page with note lists and uncategorized notes without a folder.
   - Move a note/folder to another folder (long-press an item and select a new parent folder).
-- AI
+- **AI**
   - Generate an AI summary from the note content, using a custom prompt.
   - Categorization of the summary by AI.
   - View your summaries in category-summary structure.
-- User profile
+- **User profile**
   - Sign up with email and password.
   - Update your user name, email, or password.
   - Add a profile picture.
@@ -36,19 +36,19 @@
 
 ## Frontend
 
-- Core technologies
+- **Core technologies**
   - TypeScript
   - React Native
   - Expo
   - 10play/tentap-editor
-- UI
+- **UI**
   - React Native Paper
   - React Native Reanimated
   - Universal Gradient Text
   - React Native Render HTML
-- State
+- **State**
   - Zustand
-- Forms
+- **Forms**
   - React Hook Forms
   - Zod
 
@@ -82,6 +82,8 @@ EXPO_PUBLIC_SUPABASE_SERVICE_KEY=
 EXPO_PUBLIC_GEMINI_API_KEY=
 ```
 
+_Note: add EXPO*PUBLIC* prefix in supabase.ts and geminiClient.ts._
+
 4. Run the project
 
 ```bash
@@ -90,10 +92,13 @@ npm run start
 
 # Key consideration
 
-If you were to develop your own Supabase backend, you would have to create some PostgreSQL functions and triggers. These functions should cover:
+If you were to develop your own Supabase backend, you would have to create some **PostgreSQL functions and triggers**. These functions should cover:
 
 - Automatic creation of the user's row in the profiles table.
-  -Automatic updation of the updated_at column in the notes and the ideas tables.
-  -Automatic calculation of the total number of words and the number of visits in a folder.
+- Automatic updation of the updated_at column in the notes and the ideas tables.
+- Automatic calculation of the total number of words and the number of visits in a folder.
+- Saving an AI-generated response by inserting a new row or updating the existing one.
+- Creating and updating a note with its tags.
+- Moving a note or folder to another folder.
 
 # License
