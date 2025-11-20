@@ -1,5 +1,5 @@
 import useAuthStore from "@/src/store/authStore";
-import { sharedStyles } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import OutlineButton from "@/src/ui/OutlineButton";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";

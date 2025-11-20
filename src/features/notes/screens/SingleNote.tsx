@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import debounce from "@/src/utils/debounce";
 import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
 import { useLocalSearchParams } from "expo-router";
@@ -96,10 +96,7 @@ export default function SingleNote({
         setOldNoteContent={setOldNoteContent}
       />
 
-      <View
-        style={[singleNoteStyles.container, sharedStyles.container]}
-        dataSet={{ media: sharedStylesIds.container }}
-      >
+      <View style={[sharedStyles.container, singleNoteStyles.container]}>
         <TextInput
           placeholder="Type note name"
           style={[sharedStyles.input, singleNoteStyles.noteTitleInput]}

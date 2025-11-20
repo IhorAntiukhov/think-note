@@ -1,4 +1,4 @@
-import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import { useState } from "react";
 import { View } from "react-native";
 import allNotesStyles from "../../notes/styles/allNotes.styles";
@@ -11,10 +11,7 @@ export default function AllIdeas() {
   const [data, setData] = useState<IdeaCategoryRow[]>([]);
 
   return (
-    <View
-      style={[allNotesStyles.container, sharedStyles.container]}
-      dataSet={{ media: sharedStylesIds.container }}
-    >
+    <View style={[sharedStyles.container, allNotesStyles.container]}>
       <SearchWrapper type="ideas">
         <TreeList
           type="ideas"

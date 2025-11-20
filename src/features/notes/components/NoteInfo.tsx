@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import { sharedStyles } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";

@@ -1,5 +1,5 @@
 import { COLORS } from "@/src/constants/theme";
-import { sharedStyles } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useCallback } from "react";
 import { TextInput, TextInputSubmitEditingEvent, View } from "react-native";

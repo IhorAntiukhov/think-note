@@ -1,4 +1,4 @@
-import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import { useState } from "react";
 import { View } from "react-native";
 import SearchWrapper from "../../search/components/SearchWrapper";
@@ -13,10 +13,7 @@ export default function AllNotes() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   return (
-    <View
-      style={[allNotesStyles.container, sharedStyles.container]}
-      dataSet={{ media: sharedStylesIds.container }}
-    >
+    <View style={[sharedStyles.container, allNotesStyles.container]}>
       <SearchWrapper type="notes">
         <TreeList
           type="notes"

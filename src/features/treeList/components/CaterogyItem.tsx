@@ -1,6 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import useDialogStore from "@/src/store/dialogStore";
-import { sharedStyles } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import ContextMenu from "@/src/ui/ContextMenu";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";

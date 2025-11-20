@@ -1,4 +1,5 @@
 import supabase from "@/src/api/supabase";
+import sharedStyles from "@/src/styles/shared.styles";
 import * as Linking from "expo-linking";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -8,7 +9,6 @@ import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
 import authStyles from "../styles/auth.styles";
 import SelectedForm from "../types/selectedForm";
-import { sharedStyles, sharedStylesIds } from "@/src/styles/shared.styles";
 
 export default function LoginForm() {
   const [selectedForm, setSelectedForm] = useState(SelectedForm.SignIn);
@@ -35,11 +35,8 @@ export default function LoginForm() {
   }, []);
 
   return (
-    <View
-      style={[authStyles.container, sharedStyles.container]}
-      dataSet={{ media: sharedStylesIds.container }}
-    >
-      <Card style={{ width: "100%", maxWidth: 640 }}>
+    <View style={[sharedStyles.container, authStyles.container]}>
+      <Card style={{ maxWidth: 640, width: "100%" }}>
         <Card.Content>
           {selectedForm === SelectedForm.SignIn && (
             <SignInForm switchForm={setSelectedForm} />

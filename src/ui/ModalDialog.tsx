@@ -8,7 +8,7 @@ import {
 import { Dialog, Portal } from "react-native-paper";
 import useDialogStore from "../store/dialogStore";
 import dialogStyles from "../styles/dialog.styles";
-import { sharedStyles } from "../styles/shared.styles";
+import sharedStyles from "../styles/shared.styles";
 import DialogType from "../types/dialogType";
 
 export default function ModalDialog() {

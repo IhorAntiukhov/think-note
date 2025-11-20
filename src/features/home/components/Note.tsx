@@ -1,4 +1,4 @@
-import { sharedStyles } from "@/src/styles/shared.styles";
+import sharedStyles from "@/src/styles/shared.styles";
 import React from "react";
 import { View } from "react-native";
 import { Card, Divider, TouchableRipple } from "react-native-paper";
