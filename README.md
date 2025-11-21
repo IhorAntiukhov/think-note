@@ -1,6 +1,6 @@
 # Welcome to Think Note
 
-This is a note-taking app built with **Expo** and powered by **Supabase** and **Gemini**. It provides a hierarchical folder structure, note-summarization by AI, a rich-text editor, filtering by tags, and much more!
+:notebook: [Think Note]() is a note-taking app built with **Expo**, powered by **Supabase** and **Gemini**. It supports a hierarchical folder system, AI-generated note summaries, a rich-text editor, tag-based filtering, and much more.
 
 # Overview
 
@@ -14,23 +14,23 @@ This is a note-taking app built with **Expo** and powered by **Supabase** and **
 
 # Main features
 
-- **Notes**
-  - Rich text editor
+- :notebook_with_decorative_cover: **Notes**
+  - Rich-text editor
   - Custom tags
   - Word counter
-  - Marking notes
-  - Sorting by created at, updated at, number of words, number of words, and number of visits.
-  - Home page with note lists and uncategorized notes without a folder.
-  - Move a note/folder to another folder (long-press an item and select a new parent folder).
-- **AI**
-  - Generate an AI summary from the note content, using a custom prompt.
-  - Categorization of the summary by AI.
-  - View your summaries in category-summary structure.
-- **User profile**
-  - Sign up with email and password.
-  - Update your user name, email, or password.
-  - Add a profile picture.
-  - View your statistics.
+  - Mark notes
+  - Sort by creation date, update date, word count, or number of visits
+  - Home page displaying note lists and uncategorized notes (notes without a folder)
+  - Move a note or folder to another folder (long-press an item and choose a new parent folder)
+- :robot: **AI**
+  - Generate AI summaries from note content using a custom prompt
+  - Automatic categorization of summaries
+  - View summaries organized by categories
+- :bust_in_silhouette: **User profile**
+  - Sign up with email and password
+  - Update your username, email, or password
+  - Add a profile picture
+  - View personal usage statistics
 
 # Tech stack
 
@@ -63,13 +63,13 @@ This is a note-taking app built with **Expo** and powered by **Supabase** and **
 
 # Installation
 
-1. Clone the repo
+1. Clone the repository
 
 ```bash
 git clone https://github.com/yourname/think-note.git
 ```
 
-2. Install the dependencies
+2. Install dependencies
 
 ```bash
 npm install
@@ -82,7 +82,7 @@ EXPO_PUBLIC_SUPABASE_SERVICE_KEY=
 EXPO_PUBLIC_GEMINI_API_KEY=
 ```
 
-_Note: add EXPO*PUBLIC* prefix in supabase.ts and geminiClient.ts._
+_Note: Add the EXPO*PUBLIC* prefix in both `supabase.ts` and `geminiClient.ts`_
 
 4. Run the project
 
@@ -90,15 +90,17 @@ _Note: add EXPO*PUBLIC* prefix in supabase.ts and geminiClient.ts._
 npm run start
 ```
 
-# Key consideration
+# Key considerations
 
-If you were to develop your own Supabase backend, you would have to create some **PostgreSQL functions and triggers**. These functions should cover:
+If you choose to develop your own Supabase backend, you will need to create several **PostgreSQL functions and triggers**, including:
 
-- Automatic creation of the user's row in the profiles table.
-- Automatic updation of the updated_at column in the notes and the ideas tables.
-- Automatic calculation of the total number of words and the number of visits in a folder.
-- Saving an AI-generated response by inserting a new row or updating the existing one.
-- Creating and updating a note with its tags.
-- Moving a note or folder to another folder.
+- Automatic creation of a user’s row in the profiles table
+- Automatic updating of the updated_at column in the notes and ideas tables
+- Automatic calculation of the total word count and number of visits in each folder
+- Saving an AI-generated summary by inserting a new row or updating an existing one
+- Creating and updating a note along with its tags
+- Moving a note or folder to another folder
 
 # License
+
+This project is licensed under the MIT license.

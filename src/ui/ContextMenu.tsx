@@ -1,8 +1,8 @@
 import React, { Children, useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
   Modal,
   TouchableWithoutFeedback,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Surface } from "react-native-paper";
@@ -33,6 +33,8 @@ export default function ContextMenu({
     useState<MenuPositioning | null>(null);
   const [allowCloseAnimation, setAllowCloseAnimation] = useState(false);
 
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
   const surfaceRef = useRef<View>(null);
 
   const scale = useSharedValue(0);
@@ -47,7 +49,7 @@ export default function ContextMenu({
 
         let xPosition, yPosition, alignment;
 
-        if (Dimensions.get("window").width - x > 170) {
+        if (windowWidth - x > 170) {
           xPosition = x;
           alignment = "left";
         } else {
@@ -55,7 +57,7 @@ export default function ContextMenu({
           alignment = "right";
         }
 
-        if (Dimensions.get("window").height - y > menuHeight) {
+        if (windowHeight - y > menuHeight) {
           yPosition = y;
           alignment = `top ${alignment}`;
         } else {
@@ -80,7 +82,7 @@ export default function ContextMenu({
         setAllowCloseAnimation(false);
       }, 250);
     }
-  }, [isOpened, scale, opacity, children]);
+  }, [isOpened, scale, opacity, children, windowWidth, windowHeight]);
 
   return (
     <>

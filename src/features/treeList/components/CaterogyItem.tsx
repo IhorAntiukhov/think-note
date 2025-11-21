@@ -199,6 +199,8 @@ const CategoryItem = forwardRef<CategoryItemRef, FolderCategoryItemProps>(
                 onSubmitEditing={onRenameFolder}
                 maxLength={20}
                 autoFocus
+                placeholderTextColor="gray"
+                returnKeyType="done"
               />
             ) : (
               <Text style={treeListStyles.text}>

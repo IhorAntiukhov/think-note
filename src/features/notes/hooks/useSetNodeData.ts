@@ -2,13 +2,14 @@ import useIdeaCategoriesStore from "@/src/store/ideaCategoriesStore";
 import { EditorBridge } from "@10play/tentap-editor";
 import { useEffect } from "react";
 import { incrementNoteVisits, NoteData } from "../api/notesRepo";
+import OldNoteData from "../types/oldNoteData";
 
 export default function useSetNoteData(
   editor: EditorBridge,
   noteName: string | undefined,
   noteData: NoteData | null | undefined,
   setWordCount: (value: number) => void,
-  setOldNoteContent: (value: string) => void,
+  setOldNoteData: (value: OldNoteData) => void,
   setSelectedTags: (value: string[]) => void,
   setAiResponseId: (value: number) => void,
   setAiResponseContent: (value: string) => void,
@@ -25,11 +26,13 @@ export default function useSetNoteData(
         noteName &&
         !isInitialDataSet.current
       ) {
-        setWordCount(noteData.num_words || 0);
-        setOldNoteContent(noteData.content);
-        setSelectedTags(
-          noteData.tags_notes.map((tagNote) => tagNote.tag_id.toString()),
+        const tags = noteData.tags_notes.map((tagNote) =>
+          tagNote.tag_id.toString(),
         );
+
+        setWordCount(noteData.num_words || 0);
+        setOldNoteData({ content: noteData.content, title: noteName, tags });
+        setSelectedTags(tags);
 
         if (noteData.ideas.length) {
           setAiResponseId(noteData.ideas[0].id);
@@ -55,7 +58,7 @@ export default function useSetNoteData(
     noteData,
     categories,
     setWordCount,
-    setOldNoteContent,
+    setOldNoteData,
     setSelectedTags,
     setAiResponseId,
     setAiResponseContent,

@@ -8,7 +8,8 @@ export default StyleSheet.create({
     cursor: "pointer",
   },
   multiselectContainer: {
-    width: "100%",
+    flex: 1,
+    minWidth: 280,
     maxWidth: 400,
     display: "flex",
     flexDirection: "row",

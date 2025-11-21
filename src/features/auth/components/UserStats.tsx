@@ -1,6 +1,7 @@
 import { COLORS } from "@/src/constants/theme";
 import useAuthStore from "@/src/store/authStore";
 import useDialogStore from "@/src/store/dialogStore";
+import concatNumberString from "@/src/utils/concatNumberString";
 import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -62,15 +63,15 @@ export default function UserStats() {
       <View style={profileStyles.stats}>
         <View style={profileStyles.stat}>
           <MaterialIcons name="note" size={20} color={COLORS.secondary} />
-          <Text>{numNotes} notes created</Text>
+          <Text>{concatNumberString(numNotes, "note")} created</Text>
         </View>
         <View style={profileStyles.stat}>
           <MaterialIcons name="folder" size={20} color={COLORS.secondary} />
-          <Text>{numFolders} folders created</Text>
+          <Text>{concatNumberString(numFolders, "folder")} created</Text>
         </View>
         <View style={profileStyles.stat}>
           <MaterialIcons name="lightbulb" size={20} color={COLORS.secondary} />
-          <Text>{numIdeas} ideas generated</Text>
+          <Text>{concatNumberString(numIdeas, "idea")} generated</Text>
         </View>
         <View style={profileStyles.stat}>
           <MaterialIcons

@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import sharedStyles from "@/src/styles/shared.styles";
+import concatNumberString from "@/src/utils/concatNumberString";
 import debounce from "@/src/utils/debounce";
 import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
 import { useLocalSearchParams } from "expo-router";
@@ -14,6 +15,7 @@ import useBackPressListener from "../hooks/useBackPressListener";
 import useKeyboardListener from "../hooks/useKeyboardListener";
 import useSetNoteData from "../hooks/useSetNodeData";
 import singleNoteStyles from "../styles/singleNote.styles";
+import OldNoteData from "../types/oldNoteData";
 import countWords from "../utils/countWords";
 
 interface NewNote {
@@ -43,7 +45,11 @@ export default function SingleNote({
   const [wordCount, setWordCount] = useState(0);
   const [noteTitle, setNoteTitle] = useState(noteName || "");
   const [hideNoteStats, setHideNoteStats] = useState(false);
-  const [oldNoteContent, setOldNoteContent] = useState("<p></p>");
+  const [oldNoteData, setOldNoteData] = useState<OldNoteData>({
+    content: "<p></p>",
+    title: noteName || "",
+    tags: [],
+  });
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [aiResponseId, setAiResponseId] = useState(0);
@@ -69,7 +75,7 @@ export default function SingleNote({
     noteName,
     noteData,
     setWordCount,
-    setOldNoteContent,
+    setOldNoteData,
     setSelectedTags,
     setAiResponseId,
     setAiResponseContent,
@@ -79,7 +85,13 @@ export default function SingleNote({
 
   useKeyboardListener(editor, setHideNoteStats);
 
-  useBackPressListener(editor, oldNoteContent, disableSaveCheck);
+  useBackPressListener(
+    editor,
+    noteTitle,
+    selectedTags,
+    oldNoteData,
+    disableSaveCheck,
+  );
 
   return (
     <>
@@ -93,7 +105,7 @@ export default function SingleNote({
         folderId={folderId as string}
         depth={depth as string}
         selectedTags={selectedTags}
-        setOldNoteContent={setOldNoteContent}
+        setOldNoteData={setOldNoteData}
       />
 
       <View style={[sharedStyles.container, singleNoteStyles.container]}>
@@ -103,9 +115,10 @@ export default function SingleNote({
           value={noteTitle}
           onChangeText={(text) => setNoteTitle(text)}
           maxLength={40}
+          placeholderTextColor="gray"
         />
 
-        {hideNoteStats && <Text>{wordCount} words</Text>}
+        {hideNoteStats && <Text>{concatNumberString(wordCount, "word")}</Text>}
 
         <Divider style={sharedStyles.divider} />
 

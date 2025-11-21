@@ -1,4 +1,5 @@
 import useAuthStore from "@/src/store/authStore";
+import concatNumberString from "@/src/utils/concatNumberString";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -65,8 +66,10 @@ export default function NotesList({ listName }: NotesListProps) {
           <View style={homeStyles.listNameHeader}>
             <Text style={homeStyles.listName}>{listName}</Text>
             <Text style={homeStyles.noteCount}>
-              {data ? (isUncategorized ? data.length - 1 : data.length) : 0}{" "}
-              notes
+              {concatNumberString(
+                data ? (isUncategorized ? data.length - 1 : data.length) : 0,
+                "note",
+              )}
             </Text>
           </View>
 

@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/theme";
 import sharedStyles from "@/src/styles/shared.styles";
+import concatNumberString from "@/src/utils/concatNumberString";
 import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use } from "react";
@@ -36,13 +37,15 @@ export default function NoteStats() {
         <View style={singleNoteStyles.noteStat}>
           <MaterialIcons name="file-open" size={22} color={COLORS.secondary} />
           <Text style={sharedStyles.mediumText}>
-            Visited {numVisits + 1} times
+            Visited {concatNumberString(numVisits + 1, "time")}
           </Text>
         </View>
       )}
       <View style={singleNoteStyles.noteStat}>
         <MaterialIcons name="abc" size={22} color={COLORS.secondary} />
-        <Text style={sharedStyles.mediumText}>{numWords} words</Text>
+        <Text style={sharedStyles.mediumText}>
+          {concatNumberString(numWords, "word")}
+        </Text>
       </View>
     </>
   );

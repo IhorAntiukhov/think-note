@@ -14,6 +14,7 @@ import {
   NoteData,
   updateNote,
 } from "../api/notesRepo";
+import OldNoteData from "../types/oldNoteData";
 import countWords from "../utils/countWords";
 
 interface TopBarProps {
@@ -26,7 +27,7 @@ interface TopBarProps {
   folderId: string;
   depth: string;
   selectedTags: string[];
-  setOldNoteContent: (value: string) => void;
+  setOldNoteData: (value: OldNoteData) => void;
 }
 
 export default function TopBar({
@@ -39,7 +40,7 @@ export default function TopBar({
   folderId,
   depth,
   selectedTags,
-  setOldNoteContent,
+  setOldNoteData,
 }: TopBarProps) {
   const { top } = useSafeAreaInsets();
   const router = useRouter();
@@ -149,7 +150,11 @@ export default function TopBar({
 
       if (noteError) throw noteError;
 
-      setOldNoteContent(rawText);
+      setOldNoteData({
+        content: rawText,
+        title: noteTitle,
+        tags: selectedTags,
+      });
 
       showInfoDialog("Note updation", "Note successfully updated");
     } catch (error) {
@@ -161,7 +166,7 @@ export default function TopBar({
     noteTitle,
     selectedTags,
     user.id,
-    setOldNoteContent,
+    setOldNoteData,
     showInfoDialog,
   ]);
 

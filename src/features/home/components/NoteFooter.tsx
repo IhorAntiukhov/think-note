@@ -1,3 +1,4 @@
+import concatNumberString from "@/src/utils/concatNumberString";
 import formatDate from "@/src/utils/formatDate";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use } from "react";
@@ -33,8 +34,10 @@ export default function NoteFooter({ item }: NoteProps) {
           size={20}
         />
         <Text>
-          {sortBy === "num_words" ? item.num_words : item.num_visits}
-          {sortBy === "num_words" ? " words" : " visits"}
+          {concatNumberString(
+            sortBy === "num_words" ? item.num_words : item.num_visits,
+            sortBy === "num_words" ? "word" : "visit",
+          )}
         </Text>
       </View>
     </View>

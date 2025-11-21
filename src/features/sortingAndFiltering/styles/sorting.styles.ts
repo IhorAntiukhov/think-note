@@ -11,12 +11,13 @@ export default StyleSheet.create({
     rowGap: 10,
   },
   sortingAndMarkedContainer: {
+    flex: 1,
+    minWidth: 280,
     maxWidth: 444,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    flexGrow: 1,
   },
   sortingContainer: {
     maxWidth: 444,

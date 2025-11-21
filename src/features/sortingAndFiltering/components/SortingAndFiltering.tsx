@@ -33,7 +33,7 @@ export default function SortingAndFiltering({
           onPress={() => onChangeIsMarked(!isMarked)}
         />
 
-        <View style={{ flexGrow: 1 }}>
+        <View style={{ flex: 1 }}>
           <Sorting
             sortBy={sortBy}
             onChangeSortBy={onChangeSortBy}
@@ -43,12 +43,10 @@ export default function SortingAndFiltering({
         </View>
       </View>
 
-      <View style={{ flexGrow: 1, maxWidth: 400 }}>
-        <TagsDropdown
-          selectedTags={selectedTags}
-          onChangeSelectedTags={onChangeSelectedTags}
-        />
-      </View>
+      <TagsDropdown
+        selectedTags={selectedTags}
+        onChangeSelectedTags={onChangeSelectedTags}
+      />
     </View>
   );
 }

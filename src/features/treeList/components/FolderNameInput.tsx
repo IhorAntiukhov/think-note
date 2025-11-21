@@ -55,6 +55,8 @@ export default function FolderNameInput({
         onSubmitEditing={onEndEditing}
         maxLength={20}
         autoFocus
+        placeholderTextColor="gray"
+        returnKeyType="done"
       />
     </View>
   );

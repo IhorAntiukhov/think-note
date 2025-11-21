@@ -73,6 +73,7 @@ export default function ModalDialog() {
                 placeholder={placeholder}
                 maxLength={maxLength}
                 style={[sharedStyles.input, dialogStyles.textInput]}
+                placeholderTextColor="gray"
               />
             ) : (
               <Text style={sharedStyles.mediumText}>{content}</Text>

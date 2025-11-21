@@ -65,7 +65,7 @@ export default function TagsDropdown({
 
   return (
     <View style={dropdownStyles.multiselectContainer}>
-      <View style={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
         <MultiSelect
           style={[
             dropdownStyles.dropdown,

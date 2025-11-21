@@ -3,10 +3,13 @@ import { EditorBridge } from "@10play/tentap-editor";
 import { EventArg, NavigationAction } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import React, { useEffect } from "react";
+import OldNoteData from "../types/oldNoteData";
 
 export default function useBackPressListener(
   editor: EditorBridge,
-  oldNoteContent: string,
+  noteTitle: string,
+  selectedTags: string[],
+  { content, title, tags }: OldNoteData,
   disableSaveCheck: React.RefObject<boolean>,
 ) {
   const navigation = useNavigation();
@@ -28,7 +31,12 @@ export default function useBackPressListener(
 
         const rawText = await editor.getHTML();
 
-        if (rawText !== oldNoteContent) {
+        if (
+          rawText !== content ||
+          noteTitle !== title ||
+          selectedTags.length !== tags.length ||
+          !selectedTags.every((tag, index) => tag === tags[index])
+        ) {
           showConfirmDialog(
             "Go back",
             "You have unsaved changes. Are you sure you want to go back to the notes page?",
@@ -45,5 +53,15 @@ export default function useBackPressListener(
     return () => {
       navigation.removeListener("beforeRemove", callback);
     };
-  }, [navigation, editor, oldNoteContent, showConfirmDialog, disableSaveCheck]);
+  }, [
+    navigation,
+    editor,
+    noteTitle,
+    selectedTags,
+    content,
+    title,
+    tags,
+    showConfirmDialog,
+    disableSaveCheck,
+  ]);
 }

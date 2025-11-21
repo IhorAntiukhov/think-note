@@ -24,6 +24,7 @@ export default StyleSheet.create({
   },
   input: {
     outlineWidth: 0,
+    color: "black",
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: "gray",

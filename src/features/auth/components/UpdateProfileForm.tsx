@@ -156,7 +156,7 @@ export default function UpdateProfileForm() {
           icon="lock"
           label="Confirm password"
           type="password"
-          outerStyle={{ flexGrow: 1 }}
+          outerStyle={{ flex: 1, minWidth: 0 }}
         />
         <IconButton
           icon="sync"
