@@ -29,7 +29,7 @@ export async function signUp(
         username,
         default_prompt: DEFAULT_PROMPT,
       },
-      emailRedirectTo: Linking.createURL("/(auth)/login"),
+      emailRedirectTo: Linking.createURL("login"),
     },
   });
 
@@ -43,9 +43,8 @@ export async function signOut() {
 }
 
 export async function resetPassword(email: string) {
-  console.log(Linking.createURL("/(auth)/login"));
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: Linking.createURL("/(auth)/login"),
+    redirectTo: Linking.createURL("login"),
   });
 
   return { data, error };
@@ -77,7 +76,7 @@ export async function updateUser({
       },
     },
     {
-      emailRedirectTo: Linking.createURL("/(tabs)/profile"),
+      emailRedirectTo: Linking.createURL("profile"),
     },
   );
 

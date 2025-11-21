@@ -1,10 +1,12 @@
 import { COLORS } from "@/src/constants/theme";
 import { resetPassword } from "@/src/features/auth/api/auth";
+import useDialogStore from "@/src/store/dialogStore";
 import Input from "@/src/ui/Input";
 import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
+import * as Linking from "expo-linking";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
@@ -12,7 +14,6 @@ import authStyles from "../styles/auth.styles";
 import { EmailFormData } from "../types/forms";
 import SelectedForm from "../types/selectedForm";
 import { emailFormSchema } from "../zod/separatedUserForms";
-import useDialogStore from "@/src/store/dialogStore";
 
 interface ResetPasswordFormProps {
   switchForm: React.Dispatch<React.SetStateAction<SelectedForm>>;
@@ -50,6 +51,7 @@ export default function ResetPasswordForm({
   return (
     <>
       <Text style={authStyles.title}>Reset password</Text>
+      <Text>{Linking.createURL("/login")}</Text>
 
       <Input
         name="email"

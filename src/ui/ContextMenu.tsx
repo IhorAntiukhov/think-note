@@ -1,12 +1,14 @@
 import React, { Children, useEffect, useRef, useState } from "react";
 import {
   Modal,
+  Platform,
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
 } from "react-native";
 import { Surface } from "react-native-paper";
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ContextMenuProps {
   isOpened: boolean;
@@ -33,7 +35,10 @@ export default function ContextMenu({
     useState<MenuPositioning | null>(null);
   const [allowCloseAnimation, setAllowCloseAnimation] = useState(false);
 
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const { top } = useSafeAreaInsets();
+  let { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
+  if (Platform.OS !== "web") windowHeight += top;
 
   const surfaceRef = useRef<View>(null);
 
