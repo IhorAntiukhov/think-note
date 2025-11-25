@@ -6,7 +6,6 @@ import OutlineButton from "@/src/ui/OutlineButton";
 import TextButton from "@/src/ui/TextButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "@supabase/supabase-js";
-import * as Linking from "expo-linking";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
@@ -51,7 +50,6 @@ export default function ResetPasswordForm({
   return (
     <>
       <Text style={authStyles.title}>Reset password</Text>
-      <Text>{Linking.createURL("/login")}</Text>
 
       <Input
         name="email"

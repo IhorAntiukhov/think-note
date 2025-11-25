@@ -1,8 +1,15 @@
 import { AuthError, User } from "@supabase/supabase-js";
-import * as Linking from "expo-linking";
+import { makeRedirectUri } from "expo-auth-session";
 import supabase from "../../../api/supabase";
 import DEFAULT_PROMPT from "../constants/defaultPrompt";
 import { FormDataKey } from "../types/forms";
+
+const redirectToLogin = makeRedirectUri({
+  path: "(auth)/login",
+});
+const redirectToProfile = makeRedirectUri({
+  path: "(tabs)/profile",
+});
 
 export async function signInWithEmailAndPassword(
   email: string,
@@ -29,7 +36,7 @@ export async function signUp(
         username,
         default_prompt: DEFAULT_PROMPT,
       },
-      emailRedirectTo: Linking.createURL("login"),
+      emailRedirectTo: redirectToLogin,
     },
   });
 
@@ -44,7 +51,7 @@ export async function signOut() {
 
 export async function resetPassword(email: string) {
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: Linking.createURL("login"),
+    redirectTo: redirectToLogin,
   });
 
   return { data, error };
@@ -76,7 +83,7 @@ export async function updateUser({
       },
     },
     {
-      emailRedirectTo: Linking.createURL("profile"),
+      emailRedirectTo: redirectToProfile,
     },
   );
 
@@ -122,4 +129,11 @@ export async function deleteUser(user: User) {
   const { error } = await supabase.auth.admin.deleteUser(user.id);
 
   return error;
+}
+
+export async function setSession(accessToken: string, refreshToken: string) {
+  await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
 }

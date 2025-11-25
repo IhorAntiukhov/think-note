@@ -1,9 +1,9 @@
-import supabase from "@/src/api/supabase";
 import sharedStyles from "@/src/styles/shared.styles";
 import * as Linking from "expo-linking";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Card } from "react-native-paper";
+import { setSession } from "../api/auth";
 import ResetPasswordForm from "../components/ResetPasswordForm";
 import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
@@ -12,27 +12,20 @@ import SelectedForm from "../types/selectedForm";
 
 export default function LoginForm() {
   const [selectedForm, setSelectedForm] = useState(SelectedForm.SignIn);
+  const url = Linking.useLinkingURL();
 
   useEffect(() => {
-    const subscription = Linking.addEventListener("url", async (event) => {
-      const parsedUrl = Linking.parse(event.url.replaceAll("#", "?"));
+    if (!url) return;
 
-      if (parsedUrl.queryParams) {
-        const { access_token, refresh_token } = parsedUrl.queryParams;
+    const parsedUrl = Linking.parse(url.replaceAll("#", "?"));
 
-        if (access_token && refresh_token) {
-          await supabase.auth.setSession({
-            access_token: access_token as string,
-            refresh_token: refresh_token as string,
-          });
-        }
-      }
-    });
+    if (parsedUrl.queryParams) {
+      const { access_token, refresh_token } = parsedUrl.queryParams;
 
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+      if (access_token && refresh_token)
+        setSession(access_token as string, refresh_token as string);
+    }
+  }, [url]);
 
   return (
     <View style={[sharedStyles.container, authStyles.container]}>
