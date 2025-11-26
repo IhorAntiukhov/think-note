@@ -8,7 +8,7 @@ const supabaseUrl = "https://moapdgwtprqfbmlcjsgm.supabase.co";
 
 const supabase = createClient<Database>(
   supabaseUrl,
-  process.env.EXPO_PUBLIC_SUPABASE_SERVICE_KEY!,
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!,
   {
     auth: {
       ...(Platform.OS !== "web" ? { storage: AsyncStorage } : {}),
