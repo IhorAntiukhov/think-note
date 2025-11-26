@@ -2,7 +2,8 @@
 
 :notebook: **ThinkNote** is a note-taking app built with **Expo**, powered by **Supabase** and **Gemini**. It supports a hierarchical folder system, AI-generated note summaries, a rich-text editor, tag-based filtering, and much more.
 
-[Android version](https://think-note.expo.app)
+[Android version](https://drive.google.com/file/d/1BNR4BzM90AqATbK6AE11TUBTMN_Mi8Kg/view?usp=sharing)
+
 [Web version](https://think-note.expo.app)
 
 # Overview
@@ -96,7 +97,7 @@ npm install
 3. Set environment variables in `.env.local`
 
 ```
-EXPO_PUBLIC_SUPABASE_ANON_KEY=
+EXPO_PUBLIC_SUPABASE_KEY=
 EXPO_PUBLIC_GEMINI_API_KEY=
 ```
 
